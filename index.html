@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+    <title>PV Array Professional Simulator - With Time Axis</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(145deg, #0B1A33 0%, #1A2F4F 100%);
+            min-height: 100vh;
+            padding: 15px;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            overflow: hidden;
+        }
+
+        /* Header Profesional */
+        .header {
+            background: linear-gradient(135deg, #0B1A33 0%, #1E3A5F 100%);
+            padding: 20px 30px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .header-title h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin-bottom: 5px;
+        }
+
+        .header-title p {
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+
+        /* Mode Toggle Profesional */
+        .mode-toggle {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(255,255,255,0.12);
+            padding: 8px 20px;
+            border-radius: 50px;
+            backdrop-filter: blur(5px);
+        }
+
+        .mode-label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 64px;
+            height: 32px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #2A6B9C;
+            transition: .3s;
+            border-radius: 32px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #FF5722;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(32px);
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 25px;
+        }
+
+        /* Live Dashboard */
+        .live-dashboard {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .dashboard-card {
+            background: linear-gradient(145deg, #f8faff, #f0f5ff);
+            border-radius: 20px;
+            padding: 18px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            border-left: 4px solid;
+        }
+
+        .dashboard-card.voltage { border-left-color: #2A6B9C; }
+        .dashboard-card.current { border-left-color: #FF5722; }
+        .dashboard-card.power { border-left-color: #4CAF50; }
+        .dashboard-card.efficiency { border-left-color: #9C27B0; }
+
+        .card-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #6B7A8F;
+            margin-bottom: 5px;
+        }
+
+        .card-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .card-unit {
+            font-size: 0.9rem;
+            color: #6B7A8F;
+            margin-left: 3px;
+        }
+
+        .card-sub {
+            font-size: 0.8rem;
+            color: #8A9BB0;
+            margin-top: 5px;
+        }
+
+        /* Circuit Section */
+        .circuit-section {
+            background: #F5F9FF;
+            border-radius: 24px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(42,107,156,0.15);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title h2 {
+            font-size: 1.3rem;
+            color: #0B1A33;
+            font-weight: 600;
+        }
+
+        .badge {
+            background: #2A6B9C;
+            color: white;
+            padding: 4px 15px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .time-display {
+            background: white;
+            padding: 5px 15px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            color: #1E3A5F;
+            font-weight: 500;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        /* SVG Circuit */
+        .circuit-container {
+            background: white;
+            border-radius: 16px;
+            padding: 15px;
+            overflow-x: auto;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);
+        }
+
+        svg {
+            width: 100%;
+            height: auto;
+            min-width: 700px;
+        }
+
+        /* Input Panel */
+        .input-panel {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .input-card {
+            background: #F5F9FF;
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid rgba(42,107,156,0.15);
+        }
+
+        .input-card h3 {
+            font-size: 1.1rem;
+            color: #0B1A33;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #2A6B9C;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .input-field {
+            margin-bottom: 5px;
+        }
+
+        .input-field label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #1E3A5F;
+            margin-bottom: 5px;
+        }
+
+        .input-field input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #E1E9F2;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+
+        .input-field input:focus {
+            border-color: #2A6B9C;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(42,107,156,0.1);
+        }
+
+        .unit {
+            font-size: 0.7rem;
+            color: #6B7A8F;
+            margin-top: 4px;
+        }
+
+        .tf-display {
+            background: #E8F0F9;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            border: 1px dashed #2A6B9C;
+        }
+
+        .tf-display span {
+            font-family: 'Courier New', monospace;
+            background: white;
+            padding: 5px 15px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        /* Tombol Simulasi */
+        .simulate-btn {
+            background: linear-gradient(135deg, #2A6B9C, #1E3A5F);
+            color: white;
+            border: none;
+            padding: 14px 40px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            display: block;
+            margin: 0 auto 25px;
+            box-shadow: 0 10px 25px rgba(42,107,156,0.3);
+            transition: all 0.2s;
+        }
+
+        .simulate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(42,107,156,0.4);
+        }
+
+        /* Charts Section Profesional */
+        .charts-section {
+            margin-bottom: 25px;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .chart-card {
+            background: #F5F9FF;
+            border-radius: 20px;
+            padding: 18px;
+            border: 1px solid rgba(42,107,156,0.15);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .chart-header h3 {
+            font-size: 1rem;
+            color: #0B1A33;
+            font-weight: 600;
+        }
+
+        .chart-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .chart-badge.voltage { background: #2A6B9C; }
+        .chart-badge.current { background: #FF5722; }
+        .chart-badge.power { background: #4CAF50; }
+
+        .chart-container {
+            position: relative;
+            height: 150px;
+            margin-bottom: 10px;
+        }
+
+        canvas {
+            width: 100% !important;
+            height: 150px !important;
+        }
+
+        .chart-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            padding-top: 8px;
+            border-top: 1px solid #E1E9F2;
+            font-size: 0.85rem;
+        }
+
+        .measurement {
+            display: flex;
+            align-items: baseline;
+            gap: 5px;
+        }
+
+        .measurement .label {
+            color: #6B7A8F;
+        }
+
+        .measurement .value {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .measurement .unit {
+            font-size: 0.7rem;
+            color: #6B7A8F;
+        }
+
+        .time-axis-label {
+            text-align: center;
+            font-size: 0.75rem;
+            color: #8A9BB0;
+            margin-top: 5px;
+        }
+
+        /* Parameter Table */
+        .params-section {
+            background: #F5F9FF;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .params-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .param-item {
+            background: white;
+            padding: 12px;
+            border-radius: 14px;
+            text-align: center;
+        }
+
+        .param-label {
+            font-size: 0.7rem;
+            color: #6B7A8F;
+            margin-bottom: 5px;
+        }
+
+        .param-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #0B1A33;
+        }
+
+        .param-unit {
+            font-size: 0.7rem;
+            color: #6B7A8F;
+            margin-left: 2px;
+        }
+
+        /* Current Flow */
+        .current-flow-section {
+            background: #F0F7FF;
+            border-radius: 20px;
+            padding: 18px;
+            margin-bottom: 25px;
+            border-left: 5px solid #FF5722;
+        }
+
+        .flow-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .flow-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #FF5722;
+        }
+
+        .flow-path {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .path-item {
+            background: white;
+            padding: 6px 15px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        /* Explanation */
+        .explanation-card {
+            background: linear-gradient(135deg, #F0F7FF, #E8F0F9);
+            border-radius: 20px;
+            padding: 20px;
+        }
+
+        .explanation-content {
+            line-height: 1.7;
+            color: #1E3A5F;
+            font-size: 0.95rem;
+        }
+
+        .highlight {
+            background: rgba(255,87,34,0.1);
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-weight: 600;
+            color: #FF5722;
+        }
+
+        /* Mode Mobile */
+        .mode-mobile .live-dashboard {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .mode-mobile .input-panel {
+            grid-template-columns: 1fr;
+        }
+
+        .mode-mobile .charts-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .mode-mobile .params-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        @media (max-width: 1000px) {
+            .live-dashboard {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .params-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .input-panel {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body class="mode-laptop" id="mainBody">
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-title">
+                <h1>⚡ PV Array Professional Simulator</h1>
+                <p>Real-time monitoring dengan parameter lengkap</p>
+            </div>
+            
+            <div class="mode-toggle">
+                <span class="mode-label">💻 Laptop</span>
+                <label class="switch">
+                    <input type="checkbox" id="modeSwitch">
+                    <span class="slider"></span>
+                </label>
+                <span class="mode-label">📱 Mobile</span>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <!-- Live Dashboard -->
+            <div class="live-dashboard">
+                <div class="dashboard-card voltage">
+                    <div class="card-label">Tegangan Output</div>
+                    <div><span class="card-value" id="liveVoltageValue">0.00</span><span class="card-unit">V</span></div>
+                    <div class="card-sub" id="liveVoltageDesc">Steady state</div>
+                </div>
+                <div class="dashboard-card current">
+                    <div class="card-label">Arus Output</div>
+                    <div><span class="card-value" id="liveCurrentValue">0.00</span><span class="card-unit">A</span></div>
+                    <div class="card-sub" id="liveCurrentDesc">MPP: 0 A</div>
+                </div>
+                <div class="dashboard-card power">
+                    <div class="card-label">Daya Output</div>
+                    <div><span class="card-value" id="livePowerValue">0.00</span><span class="card-unit">W</span></div>
+                    <div class="card-sub" id="livePowerDesc">Efisiensi: 0%</div>
+                </div>
+                <div class="dashboard-card efficiency">
+                    <div class="card-label">Parameter Sistem</div>
+                    <div><span class="card-value" id="liveTau">0.50</span><span class="card-unit">s</span></div>
+                    <div class="card-sub" id="liveTimeDesc">Konstanta waktu</div>
+                </div>
+            </div>
+
+            <!-- Circuit Diagram -->
+            <div class="circuit-section">
+                <div class="section-header">
+                    <div class="section-title">
+                        <h2>🔌 Diagram Rangkaian Simulink</h2>
+                        <span class="badge" id="modeBadge">Laptop Mode</span>
+                    </div>
+                    <div class="time-display" id="timeDisplay">
+                        ⏱️ Waktu simulasi: 5.0 s
+                    </div>
+                </div>
+                
+                <div class="circuit-container">
+                    <svg viewBox="0 0 1000 200" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="1000" height="200" fill="white" rx="8"/>
+                        
+                        <!-- PV Array -->
+                        <rect x="40" y="60" width="100" height="70" fill="#E3F2FD" stroke="#0B1A33" stroke-width="2" rx="8"/>
+                        <text x="90" y="85" text-anchor="middle" font-size="11" font-weight="600">PV Array</text>
+                        <text x="90" y="105" text-anchor="middle" font-size="8" id="pvParamText">1000 W/m², 25°C</text>
+                        <text x="90" y="120" text-anchor="middle" font-size="7" fill="#2A6B9C" id="pvVoltText">60V / 8.5A</text>
+                        
+                        <!-- Voltage Sensor -->
+                        <circle cx="180" cy="95" r="25" fill="#FFF3E0" stroke="#FF5722" stroke-width="2"/>
+                        <text x="180" y="95" text-anchor="middle" font-size="12">V</text>
+                        <text x="180" y="115" text-anchor="middle" font-size="7" id="sensorGainText">Gain: 1.0</text>
+                        
+                        <!-- PS Converter -->
+                        <rect x="240" y="75" width="45" height="45" fill="#E8F5E8" stroke="#4CAF50" stroke-width="2" rx="6"/>
+                        <text x="262" y="102" text-anchor="middle" font-size="9">PS</text>
+                        
+                        <!-- Transfer Fcn -->
+                        <rect x="320" y="55" width="120" height="80" fill="#F3E5F5" stroke="#9C27B0" stroke-width="2" rx="8"/>
+                        <text x="380" y="85" text-anchor="middle" font-size="10">Transfer Fcn</text>
+                        <text x="380" y="105" text-anchor="middle" font-size="8" id="tfText">1/(0.5s+1)</text>
+                        <text x="380" y="120" text-anchor="middle" font-size="7" fill="#9C27B0" id="tfParamText">τ = 0.50s</text>
+                        
+                        <!-- Scope -->
+                        <rect x="480" y="65" width="60" height="60" fill="#FFEBEE" stroke="#F44336" stroke-width="2" rx="6"/>
+                        <text x="510" y="100" text-anchor="middle" font-size="10">Scope</text>
+                        
+                        <!-- Connection Lines -->
+                        <line x1="140" y1="95" x2="155" y2="95" stroke="#333" stroke-width="2"/>
+                        <line x1="205" y1="95" x2="240" y2="95" stroke="#333" stroke-width="2"/>
+                        <line x1="285" y1="95" x2="320" y2="95" stroke="#333" stroke-width="2"/>
+                        <line x1="440" y1="95" x2="480" y2="95" stroke="#333" stroke-width="2"/>
+                        
+                        <!-- Animated Dots -->
+                        <circle r="5" fill="#FF5722">
+                            <animateMotion dur="3s" repeatCount="indefinite" path="M140,95 L155,95" rotate="auto"/>
+                        </circle>
+                        <circle r="5" fill="#FF5722">
+                            <animateMotion dur="3s" repeatCount="indefinite" path="M205,95 L240,95" rotate="auto" begin="0.8s"/>
+                        </circle>
+                        <circle r="5" fill="#FF5722">
+                            <animateMotion dur="3s" repeatCount="indefinite" path="M285,95 L320,95" rotate="auto" begin="1.6s"/>
+                        </circle>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Input Panel -->
+            <div class="input-panel">
+                <div class="input-card">
+                    <h3>🔧 PV Array Configuration</h3>
+                    <div class="input-grid">
+                        <div class="input-field">
+                            <label>Irradiance (G)</label>
+                            <input type="number" id="irradiance" value="1000" min="0" max="1500" step="10">
+                            <div class="unit">W/m² · 0-1500</div>
+                        </div>
+                        <div class="input-field">
+                            <label>Temperature (T)</label>
+                            <input type="number" id="temperature" value="25" min="-10" max="80" step="1">
+                            <div class="unit">°C · -10 to 80</div>
+                        </div>
+                        <div class="input-field">
+                            <label>Series Cells (Ns)</label>
+                            <input type="number" id="seriesCells" value="60" min="1" max="100" step="1">
+                            <div class="unit">cells · 1-100</div>
+                        </div>
+                        <div class="input-field">
+                            <label>Parallel Strings (Np)</label>
+                            <input type="number" id="parallelStrings" value="1" min="1" max="10" step="1">
+                            <div class="unit">strings · 1-10</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-card">
+                    <h3>⚙️ Transfer Function & Sensor</h3>
+                    <div class="tf-display">
+                        <span>G(s) = <span id="tfDisplayNum">1</span> / (<span id="tfDisplayDen">0.5s + 1</span>)</span>
+                    </div>
+                    <div class="input-grid">
+                        <div class="input-field">
+                            <label>Numerator (b0)</label>
+                            <input type="text" id="tfNum" value="1" placeholder="Contoh: 1">
+                        </div>
+                        <div class="input-field">
+                            <label>Denominator (a1, a0)</label>
+                            <input type="text" id="tfDen" value="0.5, 1" placeholder="0.5, 1">
+                        </div>
+                        <div class="input-field">
+                            <label>Sensor Gain (K)</label>
+                            <input type="number" id="sensorGain" value="1" min="0.1" max="10" step="0.1">
+                            <div class="unit">V/V · 0.1-10</div>
+                        </div>
+                        <div class="input-field">
+                            <label>Simulation Time</label>
+                            <input type="number" id="simTime" value="5" min="0.5" max="20" step="0.5">
+                            <div class="unit">detik · 0.5-20</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Simulate Button -->
+            <button class="simulate-btn" id="simulateBtn">
+                <span>🔄 Update Simulasi & Refresh Grafik</span>
+            </button>
+
+            <!-- 3 Grafik dengan Sumbu Waktu -->
+            <div class="charts-section">
+                <div class="charts-grid">
+                    <!-- Grafik Tegangan -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>📈 Tegangan Output (V)</h3>
+                            <span class="chart-badge voltage">V</span>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="voltageChart"></canvas>
+                        </div>
+                        <div class="chart-footer">
+                            <div class="measurement">
+                                <span class="label">Steady:</span>
+                                <span class="value" id="voltageSteady">0.00</span>
+                                <span class="unit">V</span>
+                            </div>
+                            <div class="measurement">
+                                <span class="label">Max:</span>
+                                <span class="value" id="voltageMax">0.00</span>
+                                <span class="unit">V</span>
+                            </div>
+                            <div class="measurement">
+                                <span class="label">τ:</span>
+                                <span class="value" id="voltageTau">0.50</span>
+                                <span class="unit">s</span>
+                            </div>
+                        </div>
+                        <div class="time-axis-label">Waktu (detik) →</div>
+                    </div>
+
+                    <!-- Grafik Arus -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>⚡ Arus Output (A)</h3>
+                            <span class="chart-badge current">A</span>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="currentChart"></canvas>
+                        </div>
+                        <div class="chart-footer">
+                            <div class="measurement">
+                                <span class="label">Steady:</span>
+                                <span class="value" id="currentSteady">0.00</span>
+                                <span class="unit">A</span>
+                            </div>
+                            <div class="measurement">
+                                <span class="label">Max:</span>
+                                <span class="value" id="currentMax">0.00</span>
+                                <span class="unit">A</span>
+                            </div>
+                            <div class="measurement">
+                                <span class="label">Rise:</span>
+                                <span class="value" id="currentRise">0.30</span>
+                                <span class="unit">s</span>
+                            </div>
+                        </div>
+                        <div class="time-axis-label">Waktu (detik) →</div>
+                    </div>
+
+                    <!-- Grafik Daya -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>🔋 Daya Output (W)</h3>
+                            <span class="chart-badge power">W</span>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="powerChart"></canvas>
+                        </div>
+                        <div class="chart-footer">
+                            <div class="measurement">
+                                <span class="label">Steady:</span>
+                                <span class="value" id="powerSteady">0.00</span>
+                                <span class="unit">W</span>
+                            </div>
+                            <div class="measurement">
+                                <span class="label">Peak:</span>
+                                <span class="value" id="powerPeak">0.00</span>
+                                <span class="unit">W</span>
+                            </div>
+                            <div class="measurement">
+                                <span class="label">Eff:</span>
+                                <span class="value" id="powerEff">0.0</span>
+                                <span class="unit">%</span>
+                            </div>
+                        </div>
+                        <div class="time-axis-label">Waktu (detik) →</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Parameter Lengkap -->
+            <div class="params-section">
+                <h3 style="margin-bottom: 10px;">📊 Parameter Pengukuran Lengkap</h3>
+                <div class="params-grid">
+                    <div class="param-item">
+                        <div class="param-label">Vmp (PV)</div>
+                        <span class="param-value" id="paramVmp">0.0</span><span class="param-unit">V</span>
+                    </div>
+                    <div class="param-item">
+                        <div class="param-label">Imp (PV)</div>
+                        <span class="param-value" id="paramImp">0.0</span><span class="param-unit">A</span>
+                    </div>
+                    <div class="param-item">
+                        <div class="param-label">Pmp (PV)</div>
+                        <span class="param-value" id="paramPmp">0.0</span><span class="param-unit">W</span>
+                    </div>
+                    <div class="param-item">
+                        <div class="param-label">Vout (steady)</div>
+                        <span class="param-value" id="paramVout">0.0</span><span class="param-unit">V</span>
+                    </div>
+                    <div class="param-item">
+                        <div class="param-label">Iout (steady)</div>
+                        <span class="param-value" id="paramIout">0.0</span><span class="param-unit">A</span>
+                    </div>
+                    <div class="param-item">
+                        <div class="param-label">Pout (steady)</div>
+                        <span class="param-value" id="paramPout">0.0</span><span class="param-unit">W</span>
+                    </div>
+                    <div class="param-item">
+                        <div class="param-label">Efisiensi</div>
+                        <span class="param-value" id="paramEff">0.0</span><span class="param-unit">%</span>
+                    </div>
+                    <div class="param-item">
+                        <div class="param-label">τ (time const)</div>
+                        <span class="param-value" id="paramTau">0.50</span><span class="param-unit">s</span>
+                    </div>
+                    <div class="param-item">
+                        <div class="param-label">Rise Time</div>
+                        <span class="param-value" id="paramRise">0.0</span><span class="param-unit">s</span>
+                    </div>
+                    <div class="param-item">
+                        <div class="param-label">Settling Time</div>
+                        <span class="param-value" id="paramSettle">0.0</span><span class="param-unit">s</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Current Flow -->
+            <div class="current-flow-section">
+                <div class="flow-header">
+                    <span style="font-size: 1.2rem;">⚡</span>
+                    <span style="font-weight: 600;">Aliran Arus Real-time</span>
+                    <span class="flow-value" id="flowCurrent">0.00 A</span>
+                </div>
+                <div class="flow-path">
+                    <span class="path-item">PV Array</span>
+                    <span class="path-item">→ Voltage Sensor</span>
+                    <span class="path-item">→ PS Converter</span>
+                    <span class="path-item">→ Transfer Fcn</span>
+                    <span class="path-item">→ Scope</span>
+                </div>
+            </div>
+
+            <!-- Explanation -->
+            <div class="explanation-card">
+                <div class="explanation-content" id="explanationText">
+                    <span id="expDetail">Memuat data...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Inisialisasi 3 Chart dengan sumbu waktu
+        const voltageCtx = document.getElementById('voltageChart').getContext('2d');
+        const currentCtx = document.getElementById('currentChart').getContext('2d');
+        const powerCtx = document.getElementById('powerChart').getContext('2d');
+
+        // Konfigurasi chart dengan sumbu waktu
+        const chartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { 
+                    display: true,
+                    title: { display: false },
+                    ticks: { 
+                        maxTicksLimit: 5,
+                        font: { size: 9 }
+                    },
+                    grid: { display: false }
+                },
+                y: { 
+                    display: true,
+                    title: { display: false },
+                    ticks: { 
+                        maxTicksLimit: 4,
+                        font: { size: 9 }
+                    },
+                    grid: { color: '#E1E9F2' }
+                }
+            },
+            elements: {
+                line: { borderWidth: 2 },
+                point: { radius: 0 }
+            }
+        };
+
+        const voltageChart = new Chart(voltageCtx, {
+            type: 'line',
+            data: { labels: [], datasets: [{ data: [], borderColor: '#2A6B9C', backgroundColor: 'rgba(42,107,156,0.05)', fill: true }] },
+            options: chartOptions
+        });
+
+        const currentChart = new Chart(currentCtx, {
+            type: 'line',
+            data: { labels: [], datasets: [{ data: [], borderColor: '#FF5722', backgroundColor: 'rgba(255,87,34,0.05)', fill: true }] },
+            options: chartOptions
+        });
+
+        const powerChart = new Chart(powerCtx, {
+            type: 'line',
+            data: { labels: [], datasets: [{ data: [], borderColor: '#4CAF50', backgroundColor: 'rgba(76,175,80,0.05)', fill: true }] },
+            options: chartOptions
+        });
+
+        // Mode Toggle
+        const modeSwitch = document.getElementById('modeSwitch');
+        const mainBody = document.getElementById('mainBody');
+        const modeBadge = document.getElementById('modeBadge');
+
+        modeSwitch.addEventListener('change', function() {
+            if (this.checked) {
+                mainBody.className = 'mode-mobile';
+                modeBadge.textContent = 'Mobile Mode';
+            } else {
+                mainBody.className = 'mode-laptop';
+                modeBadge.textContent = 'Laptop Mode';
+            }
+            setTimeout(() => {
+                [voltageChart, currentChart, powerChart].forEach(chart => chart.resize());
+            }, 100);
+        });
+
+        // Model PV Profesional
+        function calculatePVProfessional(irradiance, temperature, series, parallel) {
+            // Parameter model (berdasarkan datasheet panel sungguhan)
+            const V_oc_STC = 0.62; // Voc per cell
+            const I_sc_STC = 8.8;   // Isc per string
+            const k_v = -0.0025;     // Koefisien suhu tegangan (V/°C)
+            const k_i = 0.00045;      // Koefisien suhu arus (A/°C)
+            const a = 0.04;           // Faktor non-linear iradiansi
+            
+            // Koreksi iradiansi dan suhu
+            let deltaT = temperature - 25;
+            let deltaG = (irradiance / 1000) - 1;
+            
+            // Tegangan per cell
+            let v_per_cell = V_oc_STC * (1 + a * deltaG) + k_v * deltaT;
+            v_per_cell = Math.max(0.3, Math.min(0.75, v_per_cell));
+            
+            // Arus per string
+            let i_per_string = I_sc_STC * (irradiance / 1000) * (1 + k_i * deltaT);
+            i_per_string = Math.max(0, i_per_string);
+            
+            // Faktor pengisian (fill factor) - realistic
+            let ff = 0.75 - 0.002 * deltaT;
+            ff = Math.max(0.65, Math.min(0.82, ff));
+            
+            // Maximum Power Point
+            let v_mp = v_per_cell * series * 0.82; // MPP sekitar 82% Voc
+            let i_mp = i_per_string * parallel * 0.95; // MPP sekitar 95% Isc
+            let p_mp = v_mp * i_mp;
+            
+            return {
+                voc: v_per_cell * series,
+                isc: i_per_string * parallel,
+                vmp: v_mp,
+                imp: i_mp,
+                pmp: p_mp,
+                ff: ff
+            };
+        }
+
+        // Update Simulasi
+        function updateSimulation() {
+            // Ambil input
+            const irradiance = parseFloat(document.getElementById('irradiance').value) || 1000;
+            const temperature = parseFloat(document.getElementById('temperature').value) || 25;
+            const series = parseInt(document.getElementById('seriesCells').value) || 60;
+            const parallel = parseInt(document.getElementById('parallelStrings').value) || 1;
+            const sensorGain = parseFloat(document.getElementById('sensorGain').value) || 1;
+            const simTime = parseFloat(document.getElementById('simTime').value) || 5;
+            
+            // Parse TF
+            const tfNum = parseFloat(document.getElementById('tfNum').value) || 1;
+            let tfDen = [0.5, 1];
+            try {
+                tfDen = document.getElementById('tfDen').value.split(',').map(x => parseFloat(x.trim()));
+                if (tfDen.length < 2) tfDen = [0.5, 1];
+            } catch { tfDen = [0.5, 1]; }
+
+            // Hitung PV
+            const pv = calculatePVProfessional(irradiance, temperature, series, parallel);
+            
+            // Update display
+            document.getElementById('tfDisplayNum').innerHTML = tfNum;
+            document.getElementById('tfDisplayDen').innerHTML = `${tfDen[0]}s + ${tfDen[1]}`;
+            document.getElementById('tfText').innerHTML = `${tfNum}/(${tfDen[0]}s+${tfDen[1]})`;
+            document.getElementById('pvParamText').innerHTML = `${irradiance} W/m², ${temperature}°C`;
+            document.getElementById('pvVoltText').innerHTML = `${pv.vmp.toFixed(1)}V / ${pv.imp.toFixed(1)}A`;
+            document.getElementById('sensorGainText').innerHTML = `Gain: ${sensorGain}`;
+            
+            // Generate time array
+            const steps = 80;
+            const timeArray = [];
+            const dt = simTime / steps;
+            for (let i = 0; i <= steps; i++) timeArray.push(i * dt);
+            
+            // Transfer function parameters
+            const K = tfNum / tfDen[1];
+            const tau = tfDen[0] / tfDen[1];
+            
+            // Generate outputs
+            const voltageOut = timeArray.map(t => K * pv.vmp * (1 - Math.exp(-t / Math.max(tau, 0.01))) * sensorGain);
+            const currentOut = timeArray.map(t => pv.imp * (0.92 + 0.08 * (1 - Math.exp(-t / (tau * 0.7)))));
+            const powerOut = timeArray.map((t, i) => voltageOut[i] * currentOut[i]);
+            
+            // Format labels untuk sumbu waktu
+            const timeLabels = timeArray.map(t => t.toFixed(1));
+            
+            // Update charts
+            voltageChart.data.labels = timeLabels;
+            voltageChart.data.datasets[0].data = voltageOut;
+            voltageChart.update();
+            
+            currentChart.data.labels = timeLabels;
+            currentChart.data.datasets[0].data = currentOut;
+            currentChart.update();
+            
+            powerChart.data.labels = timeLabels;
+            powerChart.data.datasets[0].data = powerOut;
+            powerChart.update();
+            
+            // Nilai akhir
+            const finalVoltage = voltageOut[voltageOut.length - 1];
+            const finalCurrent = currentOut[currentOut.length - 1];
+            const finalPower = powerOut[powerOut.length - 1];
+            
+            // Max values
+            const maxVoltage = Math.max(...voltageOut);
+            const maxCurrent = Math.max(...currentOut);
+            const maxPower = Math.max(...powerOut);
+            
+            // Rise time (0-90%)
+            let riseTime = 0;
+            const targetVoltage = 0.9 * finalVoltage;
+            for (let i = 0; i < voltageOut.length; i++) {
+                if (voltageOut[i] >= targetVoltage) {
+                    riseTime = timeArray[i];
+                    break;
+                }
+            }
+            
+            // Settling time (within 2%)
+            let settlingTime = simTime;
+            const tolerance = 0.02 * finalVoltage;
+            for (let i = voltageOut.length - 1; i >= 0; i--) {
+                if (Math.abs(voltageOut[i] - finalVoltage) > tolerance) {
+                    settlingTime = timeArray[Math.min(i + 1, voltageOut.length - 1)];
+                    break;
+                }
+            }
+            
+            // Update dashboard
+            document.getElementById('liveVoltageValue').innerHTML = finalVoltage.toFixed(2);
+            document.getElementById('liveCurrentValue').innerHTML = finalCurrent.toFixed(2);
+            document.getElementById('livePowerValue').innerHTML = finalPower.toFixed(2);
+            document.getElementById('liveTau').innerHTML = tau.toFixed(2);
+            
+            document.getElementById('liveVoltageDesc').innerHTML = `Steady state · ${finalVoltage.toFixed(2)}V`;
+            document.getElementById('liveCurrentDesc').innerHTML = `MPP: ${pv.imp.toFixed(2)}A`;
+            document.getElementById('livePowerDesc').innerHTML = `Efisiensi: ${((finalPower/pv.pmp)*100).toFixed(1)}%`;
+            document.getElementById('liveTimeDesc').innerHTML = `τ = ${tau.toFixed(2)}s`;
+            
+            document.getElementById('timeDisplay').innerHTML = `⏱️ Waktu simulasi: ${simTime.toFixed(1)} s`;
+            document.getElementById('tfParamText').innerHTML = `τ = ${tau.toFixed(2)}s`;
+            
+            // Update chart footers
+            document.getElementById('voltageSteady').innerHTML = finalVoltage.toFixed(2);
+            document.getElementById('voltageMax').innerHTML = maxVoltage.toFixed(2);
+            document.getElementById('voltageTau').innerHTML = tau.toFixed(2);
+            
+            document.getElementById('currentSteady').innerHTML = finalCurrent.toFixed(2);
+            document.getElementById('currentMax').innerHTML = maxCurrent.toFixed(2);
+            document.getElementById('currentRise').innerHTML = riseTime.toFixed(2);
+            
+            document.getElementById('powerSteady').innerHTML = finalPower.toFixed(2);
+            document.getElementById('powerPeak').innerHTML = maxPower.toFixed(2);
+            document.getElementById('powerEff').innerHTML = ((finalPower/pv.pmp)*100).toFixed(1);
+            
+            // Update parameter lengkap
+            document.getElementById('paramVmp').innerHTML = pv.vmp.toFixed(2);
+            document.getElementById('paramImp').innerHTML = pv.imp.toFixed(2);
+            document.getElementById('paramPmp').innerHTML = pv.pmp.toFixed(2);
+            document.getElementById('paramVout').innerHTML = finalVoltage.toFixed(2);
+            document.getElementById('paramIout').innerHTML = finalCurrent.toFixed(2);
+            document.getElementById('paramPout').innerHTML = finalPower.toFixed(2);
+            document.getElementById('paramEff').innerHTML = ((finalPower/pv.pmp)*100).toFixed(1);
+            document.getElementById('paramTau').innerHTML = tau.toFixed(2);
+            document.getElementById('paramRise').innerHTML = riseTime.toFixed(2);
+            document.getElementById('paramSettle').innerHTML = settlingTime.toFixed(2);
+            
+            // Update current flow
+            document.getElementById('flowCurrent').innerHTML = finalCurrent.toFixed(2) + ' A';
+            
+            // Update explanation
+            document.getElementById('expDetail').innerHTML = 
+                `<span class="highlight">${irradiance} W/m²</span> · <span class="highlight">${temperature}°C</span> | ` +
+                `PV: Vmp=${pv.vmp.toFixed(2)}V, Imp=${pv.imp.toFixed(2)}A, Pmp=${pv.pmp.toFixed(2)}W | ` +
+                `Output: V=${finalVoltage.toFixed(2)}V, I=${finalCurrent.toFixed(2)}A, P=${finalPower.toFixed(2)}W | ` +
+                `τ=${tau.toFixed(2)}s, Tr=${riseTime.toFixed(2)}s, η=${((finalPower/pv.pmp)*100).toFixed(1)}%`;
+        }
+
+        // Event listeners
+        document.getElementById('simulateBtn').addEventListener('click', updateSimulation);
+        
+        const inputs = document.querySelectorAll('input');
+        inputs.forEach(input => {
+            input.addEventListener('input', () => {
+                clearTimeout(window.updateTimeout);
+                window.updateTimeout = setTimeout(updateSimulation, 300);
+            });
+        });
+
+        // Initial update
+        window.onload = updateSimulation;
+    </script>
+</body>
+</html>
