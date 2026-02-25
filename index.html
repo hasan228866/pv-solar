@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PV Array Simulator Professional - Desktop Version</title>
+    <title>PV SIMULATOR INDUSTRIAL | Standar IEC 61724</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        /* ========== RESET & VARIABLES ========== */
         * {
             margin: 0;
             padding: 0;
@@ -13,400 +14,456 @@
         }
 
         :root {
-            --primary: #0B1A33;
-            --primary-light: #1E3A5F;
-            --primary-dark: #071126;
-            --voltage: #2563EB;
-            --current: #DC2626;
-            --power: #16A34A;
-            --efficiency: #7C3AED;
+            --primary: #0A1929;
+            --primary-dark: #001E3C;
+            --primary-light: #1A3B5C;
+            --secondary: #132F4C;
+            --accent: #3B82F6;
+            --accent-light: #60A5FA;
+            --accent-dark: #2563EB;
+            
+            --voltage: #3B82F6;
+            --current: #EF4444;
+            --power: #10B981;
+            --efficiency: #8B5CF6;
             --temperature: #F59E0B;
-            --irradiance: #D97706;
-            --bg-light: #F1F5F9;
-            --bg-card: #FFFFFF;
-            --text-primary: #0F172A;
-            --text-secondary: #475569;
-            --border: #E2E8F0;
-            --success: #059669;
-            --warning: #D97706;
-            --danger: #DC2626;
-            --info: #2563EB;
-            --shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.02);
-            --shadow-hover: 0 20px 30px -10px rgba(0,0,0,0.15);
+            --irradiance: #F97316;
+            
+            --bg-dark: #0F172A;
+            --bg-card: #1E293B;
+            --bg-panel: #334155;
+            --bg-light: #F8FAFC;
+            
+            --text-primary: #F1F5F9;
+            --text-secondary: #94A3B8;
+            --text-muted: #64748B;
+            
+            --border: #334155;
+            --border-light: #475569;
+            
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --info: #3B82F6;
+            
+            --shadow-sm: 0 4px 6px -1px rgba(0,0,0,0.2);
+            --shadow-md: 0 10px 15px -3px rgba(0,0,0,0.3);
+            --shadow-lg: 0 20px 25px -5px rgba(0,0,0,0.4);
+            --shadow-xl: 0 25px 50px -12px rgba(0,0,0,0.5);
+            
+            --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            font-family: var(--font-sans);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             min-height: 100vh;
-            padding: 20px;
+            padding: 24px;
+            color: var(--text-primary);
         }
 
-        /* Import Inter font */
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-
         .dashboard {
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 0 auto;
         }
 
-        /* Header */
-        .header {
-            background: rgba(255,255,255,0.05);
+        /* ========== TYPOGRAPHY ========== */
+        h1 { font-size: 2.2rem; font-weight: 700; letter-spacing: -0.5px; }
+        h2 { font-size: 1.3rem; font-weight: 600; letter-spacing: -0.3px; }
+        h3 { font-size: 1.1rem; font-weight: 600; }
+        .text-muted { color: var(--text-muted); }
+        .text-accent { color: var(--accent); }
+
+        /* ========== HEADER INDUSTRIAL ========== */
+        .industrial-header {
+            background: rgba(10, 25, 41, 0.95);
             backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: 24px;
+            border-radius: 28px;
             padding: 24px 32px;
             margin-bottom: 24px;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            box-shadow: var(--shadow-lg);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+            overflow: hidden;
         }
 
-        .header-left h1 {
-            color: white;
-            font-size: 2.2rem;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-            margin-bottom: 8px;
+        .industrial-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-light), var(--accent));
         }
 
-        .header-left .subtitle {
-            color: rgba(255,255,255,0.8);
-            font-size: 1rem;
+        .header-left {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
 
-        .header-right {
+        .header-badges {
             display: flex;
             gap: 12px;
         }
 
-        .badge {
-            background: rgba(255,255,255,0.15);
-            color: white;
-            padding: 8px 20px;
+        .badge-industrial {
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: var(--accent-light);
+            padding: 6px 16px;
             border-radius: 40px;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             font-weight: 500;
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-
-        .live-time {
-            background: var(--success);
-            color: white;
-            padding: 8px 20px;
-            border-radius: 40px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            display: flex;
+            display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
 
-        /* Grid Layout */
-        .grid {
+        .live-badge {
+            background: linear-gradient(135deg, var(--accent-dark), var(--accent));
+            color: white;
+            padding: 8px 24px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 1rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* ========== INDUSTRIAL METRICS ========== */
+        .metrics-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 20px;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
 
-        /* Cards */
-        .card {
+        .metric-card {
             background: var(--bg-card);
             border-radius: 24px;
             padding: 24px;
-            box-shadow: var(--shadow);
             border: 1px solid var(--border);
-            transition: all 0.3s ease;
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
-        .card:hover {
-            box-shadow: var(--shadow-hover);
-            transform: translateY(-2px);
+        .metric-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--accent);
         }
 
-        .card-full {
-            grid-column: span 2;
+        .metric-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent), transparent);
         }
 
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .card-header h2 {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .card-header h2 i {
-            font-size: 1.5rem;
-        }
-
-        .chip {
-            background: var(--bg-light);
-            padding: 6px 14px;
-            border-radius: 30px;
-            font-size: 0.8rem;
-            font-weight: 500;
+        .metric-label {
             color: var(--text-secondary);
-            border: 1px solid var(--border);
-        }
-
-        .chip-primary {
-            background: var(--info);
-            color: white;
-            border: none;
-        }
-
-        /* Live Dashboard */
-        .live-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-        }
-
-        .live-item {
-            background: linear-gradient(145deg, var(--bg-light), #FFFFFF);
-            border-radius: 20px;
-            padding: 20px;
-            text-align: center;
-            border: 1px solid var(--border);
-        }
-
-        .live-label {
             font-size: 0.8rem;
-            color: var(--text-secondary);
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 8px;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .live-number {
-            font-size: 2.5rem;
+        .metric-value {
+            font-size: 2.8rem;
             font-weight: 700;
             line-height: 1.2;
+            margin-bottom: 8px;
+            font-family: var(--font-mono);
         }
 
-        .live-unit {
-            font-size: 0.9rem;
+        .metric-unit {
+            font-size: 1rem;
             color: var(--text-secondary);
             margin-left: 4px;
         }
 
-        .live-voltage .live-number { color: var(--voltage); }
-        .live-current .live-number { color: var(--current); }
-        .live-power .live-number { color: var(--power); }
-        .live-efficiency .live-number { color: var(--efficiency); }
-
-        .live-trend {
-            font-size: 0.7rem;
-            margin-top: 8px;
+        .metric-trend {
+            font-size: 0.8rem;
             color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        /* Panel Selector */
-        .panel-grid {
+        .trend-up { color: var(--success); }
+        .trend-down { color: var(--danger); }
+
+        .voltage-metric .metric-value { color: var(--voltage); }
+        .current-metric .metric-value { color: var(--current); }
+        .power-metric .metric-value { color: var(--power); }
+        .efficiency-metric .metric-value { color: var(--efficiency); }
+
+        /* ========== PANEL SELECTOR INDUSTRIAL ========== */
+        .panel-section {
+            background: var(--bg-card);
+            border-radius: 28px;
+            padding: 28px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .section-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .section-title h2 {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .panel-grid-industrial {
             display: grid;
             grid-template-columns: repeat(6, 1fr);
-            gap: 10px;
-            margin-bottom: 20px;
+            gap: 12px;
+            margin-bottom: 28px;
         }
 
-        .panel-btn {
-            background: var(--bg-light);
+        .panel-btn-industrial {
+            background: var(--bg-panel);
             border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 16px 8px;
-            font-size: 0.9rem;
+            border-radius: 18px;
+            padding: 20px 12px;
             font-weight: 600;
-            color: var(--text-primary);
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s ease;
+            color: var(--text-primary);
             display: flex;
             flex-direction: column;
             align-items: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
         }
 
-        .panel-btn small {
+        .panel-btn-industrial::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .panel-btn-industrial:hover::before {
+            left: 100%;
+        }
+
+        .panel-btn-industrial:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .panel-btn-industrial.active {
+            background: linear-gradient(135deg, var(--accent-dark), var(--accent));
+            border-color: var(--accent);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .panel-btn-industrial small {
             font-size: 0.7rem;
-            font-weight: 400;
-            color: var(--text-secondary);
-            margin-top: 4px;
+            opacity: 0.8;
+            font-weight: normal;
         }
 
-        .panel-btn:hover {
-            background: var(--info);
-            color: white;
-            border-color: var(--info);
-            transform: scale(1.02);
-        }
-
-        .panel-btn:hover small {
-            color: rgba(255,255,255,0.9);
-        }
-
-        .panel-btn.active {
-            background: var(--info);
-            color: white;
-            border-color: var(--info);
-            box-shadow: 0 5px 15px rgba(37,99,235,0.3);
-        }
-
-        .panel-btn.active small {
-            color: rgba(255,255,255,0.9);
-        }
-
-        .panel-detail {
-            background: linear-gradient(145deg, var(--bg-light), #FFFFFF);
-            border-radius: 18px;
-            padding: 20px;
+        .panel-specs {
+            background: var(--bg-panel);
+            border-radius: 20px;
+            padding: 24px;
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-            border: 1px solid var(--border);
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            border: 1px solid var(--border-light);
         }
 
-        .detail-group {
+        .spec-item {
             display: flex;
             flex-direction: column;
             gap: 8px;
         }
 
-        .detail-row {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.9rem;
-        }
-
-        .detail-label {
+        .spec-label {
             color: var(--text-secondary);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        .detail-value {
+        .spec-value {
+            font-size: 1.2rem;
             font-weight: 600;
-            color: var(--info);
+            font-family: var(--font-mono);
+            color: var(--accent-light);
         }
 
-        /* Input Grid */
-        .input-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-        }
-
-        .input-field {
-            margin-bottom: 8px;
-        }
-
-        .input-field label {
-            display: block;
+        .spec-unit {
             font-size: 0.8rem;
-            font-weight: 600;
             color: var(--text-secondary);
-            margin-bottom: 6px;
-        }
-
-        .input-field input {
-            width: 100%;
-            padding: 14px 16px;
-            border: 2px solid var(--border);
-            border-radius: 16px;
-            font-size: 1rem;
-            font-weight: 500;
-            background: var(--bg-light);
-            transition: all 0.2s;
-        }
-
-        .input-field input:focus {
-            border-color: var(--info);
-            outline: none;
-            background: white;
-        }
-
-        .unit {
-            font-size: 0.7rem;
-            color: var(--text-secondary);
-            margin-top: 6px;
             margin-left: 4px;
         }
 
-        /* TF Display */
-        .tf-display {
-            background: linear-gradient(145deg, var(--bg-light), #FFFFFF);
-            padding: 20px;
-            border-radius: 18px;
-            text-align: center;
-            font-family: 'Courier New', monospace;
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: var(--info);
-            border: 2px dashed var(--info);
+        /* ========== MAIN GRID ========== */
+        .industrial-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        /* ========== CONFIGURATION CARD ========== */
+        .config-card {
+            background: var(--bg-card);
+            border-radius: 28px;
+            padding: 28px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .config-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .config-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .input-group-industrial {
             margin-bottom: 20px;
         }
 
-        /* Simulate Button */
-        .simulate-btn {
-            background: linear-gradient(135deg, var(--info), var(--primary-light));
-            color: white;
-            border: none;
-            padding: 20px 32px;
-            font-size: 1.2rem;
-            font-weight: 600;
-            border-radius: 60px;
+        .input-group-industrial label {
+            display: block;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+            letter-spacing: 0.3px;
+        }
+
+        .input-group-industrial input {
             width: 100%;
-            margin: 20px 0;
-            box-shadow: 0 15px 30px rgba(37,99,235,0.3);
-            cursor: pointer;
-            transition: all 0.3s;
-            border: 1px solid rgba(255,255,255,0.2);
+            background: var(--bg-panel);
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 16px 20px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
         }
 
-        .simulate-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 20px 40px rgba(37,99,235,0.4);
+        .input-group-industrial input:focus {
+            border-color: var(--accent);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
         }
 
-        /* Charts Grid */
-        .charts-grid {
+        .input-group-industrial input:hover {
+            border-color: var(--accent-light);
+        }
+
+        .input-help {
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            margin-top: 6px;
+        }
+
+        /* ========== TF DISPLAY ========== */
+        .tf-industrial {
+            background: linear-gradient(135deg, var(--bg-panel), var(--bg-card));
+            border: 2px dashed var(--accent);
+            border-radius: 20px;
+            padding: 24px;
+            text-align: center;
+            margin: 24px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tf-industrial::before {
+            content: '⚡';
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2rem;
+            opacity: 0.1;
+        }
+
+        .tf-equation {
+            font-family: var(--font-mono);
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-light);
+            letter-spacing: 2px;
+        }
+
+        .tf-params {
+            color: var(--text-secondary);
+            margin-top: 8px;
+            font-size: 0.9rem;
+        }
+
+        /* ========== CHARTS INDUSTRIAL ========== */
+        .charts-industrial {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            margin-bottom: 20px;
+            gap: 24px;
+            margin: 24px 0;
         }
 
-        .chart-card {
+        .chart-card-industrial {
             background: var(--bg-card);
-            border-radius: 20px;
+            border-radius: 24px;
             padding: 20px;
             border: 1px solid var(--border);
+            box-shadow: var(--shadow-md);
         }
 
-        .chart-header {
+        .chart-header-industrial {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 16px;
         }
 
-        .chart-header h3 {
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
         .chart-badge {
-            padding: 4px 12px;
+            padding: 6px 16px;
             border-radius: 30px;
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             font-weight: 600;
             color: white;
         }
@@ -415,54 +472,55 @@
         .badge-current { background: var(--current); }
         .badge-power { background: var(--power); }
 
-        .chart-container {
-            position: relative;
+        .chart-container-industrial {
             height: 200px;
+            position: relative;
             margin-bottom: 16px;
         }
 
         canvas {
             width: 100% !important;
             height: 200px !important;
-            background: white;
-            border-radius: 12px;
+            background: var(--bg-panel);
+            border-radius: 16px;
             padding: 8px;
         }
 
-        .chart-footer {
+        .chart-footer-industrial {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            padding-top: 12px;
+            gap: 8px;
+            padding-top: 16px;
             border-top: 1px solid var(--border);
+            color: var(--text-secondary);
+            font-size: 0.8rem;
         }
 
-        .chart-footer span {
-            font-weight: 600;
+        .chart-footer-industrial span {
             color: var(--text-primary);
+            font-weight: 600;
+            font-family: var(--font-mono);
         }
 
-        /* Industrial Parameters Grid */
-        .industrial-grid {
+        /* ========== PARAMETERS INDUSTRIAL ========== */
+        .params-industrial {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
+            gap: 20px;
+            margin: 24px 0;
         }
 
-        .param-group {
-            background: linear-gradient(145deg, var(--bg-light), #FFFFFF);
-            border-radius: 18px;
-            padding: 18px;
+        .param-card {
+            background: var(--bg-panel);
+            border-radius: 20px;
+            padding: 20px;
             border: 1px solid var(--border);
         }
 
-        .param-group-title {
-            font-size: 0.9rem;
-            font-weight: 600;
+        .param-card h3 {
             color: var(--text-secondary);
-            margin-bottom: 15px;
+            font-size: 0.9rem;
+            margin-bottom: 16px;
             padding-bottom: 8px;
             border-bottom: 2px solid var(--border);
         }
@@ -470,1217 +528,1126 @@
         .param-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 10px;
-            font-size: 0.85rem;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
         }
 
         .param-name {
             color: var(--text-secondary);
         }
 
-        .param-number {
+        .param-value {
             font-weight: 600;
-            color: var(--text-primary);
+            font-family: var(--font-mono);
+            color: var(--accent-light);
         }
 
-        .param-unit-small {
-            font-size: 0.65rem;
-            color: var(--text-secondary);
+        .param-unit {
+            color: var(--text-muted);
+            font-size: 0.7rem;
             margin-left: 2px;
         }
 
-        /* Analysis Cards */
-        .analysis-grid {
+        /* ========== ANALYSIS CARDS ========== */
+        .analysis-industrial {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin: 24px 0;
         }
 
-        .analysis-card {
-            background: linear-gradient(145deg, #F0F9FF, #E6F0FA);
-            border-radius: 20px;
-            padding: 20px;
-            border-left: 4px solid var(--info);
+        .analysis-card-industrial {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(59, 130, 246, 0.05));
+            border-radius: 24px;
+            padding: 28px;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            backdrop-filter: blur(10px);
         }
 
         .analysis-title {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .analysis-title h3 {
-            font-size: 1rem;
+            gap: 12px;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
             font-weight: 600;
-            color: var(--text-primary);
         }
 
-        .analysis-content {
-            font-size: 0.9rem;
-            line-height: 1.6;
-            color: var(--text-primary);
+        .analysis-text {
+            line-height: 1.8;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
         }
 
         .analysis-highlight {
-            background: rgba(37,99,235,0.1);
+            color: var(--accent-light);
+            font-weight: 600;
+            background: rgba(59, 130, 246, 0.1);
             padding: 2px 8px;
             border-radius: 6px;
-            font-weight: 600;
-            color: var(--info);
         }
 
-        .status-grid {
+        .status-grid-industrial {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-top: 15px;
+            gap: 12px;
+            margin-top: 24px;
         }
 
-        .status-item {
-            background: white;
-            padding: 10px 15px;
-            border-radius: 14px;
+        .status-item-industrial {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border: 1px solid var(--border);
         }
 
         .status-label {
-            font-size: 0.75rem;
             color: var(--text-secondary);
+            font-size: 0.8rem;
         }
 
-        .status-value {
+        .status-value-industrial {
             font-weight: 600;
-            font-size: 0.85rem;
+            font-size: 0.95rem;
         }
 
         .status-good { color: var(--success); }
         .status-warning { color: var(--warning); }
-        .status-bad { color: var(--danger); }
+        .status-critical { color: var(--danger); }
 
-        /* Flow Card */
-        .flow-card {
-            background: linear-gradient(145deg, #FEF2F2, #FEE2E2);
-            border-radius: 20px;
-            padding: 20px;
-            border-left: 4px solid var(--current);
+        /* ========== FLOW CARD ========== */
+        .flow-card-industrial {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.05));
+            border-radius: 24px;
+            padding: 28px;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .flow-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 20px;
         }
 
-        .flow-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 15px;
-        }
-
-        .flow-label {
-            font-weight: 600;
-            color: var(--text-primary);
-            font-size: 1rem;
-        }
-
-        .flow-value {
-            font-size: 2rem;
+        .flow-value-industrial {
+            font-size: 2.5rem;
             font-weight: 700;
+            font-family: var(--font-mono);
             color: var(--current);
         }
 
-        .flow-path {
+        .flow-path-industrial {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .path-chip {
-            background: white;
-            padding: 8px 16px;
-            border-radius: 40px;
-            font-size: 0.8rem;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
-            border: 1px solid var(--border);
-        }
-
-        /* Explanation Card */
-        .explanation-card {
-            background: var(--bg-card);
-            border-radius: 20px;
-            padding: 24px;
-            border: 1px solid var(--border);
-            margin-bottom: 20px;
-        }
-
-        .explanation-title {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 16px;
-        }
-
-        .explanation-title h3 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .explanation-text {
-            font-size: 0.9rem;
-            line-height: 1.7;
-            color: var(--text-primary);
-        }
-
-        .bullet-point {
-            display: flex;
             gap: 12px;
-            margin-top: 12px;
+            margin-top: 20px;
+        }
+
+        .path-chip-industrial {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            border-radius: 40px;
+            padding: 12px 24px;
             font-size: 0.9rem;
             color: var(--text-secondary);
         }
 
-        .bullet {
-            width: 6px;
-            height: 6px;
-            background: var(--info);
-            border-radius: 50%;
-            margin-top: 8px;
-            flex-shrink: 0;
+        /* ========== DETAIL RESULTS ========== */
+        .details-industrial {
+            background: var(--bg-card);
+            border-radius: 28px;
+            padding: 28px;
+            margin: 24px 0;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-lg);
         }
 
-        /* Responsive */
-        @media (max-width: 1200px) {
-            .grid { gap: 15px; }
-            .live-number { font-size: 2rem; }
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .bullet-industrial {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            color: var(--text-secondary);
+        }
+
+        .bullet-point-industrial {
+            width: 8px;
+            height: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+            margin-top: 8px;
+        }
+
+        /* ========== SIMULATE BUTTON ========== */
+        .btn-simulate-industrial {
+            background: linear-gradient(135deg, var(--accent-dark), var(--accent));
+            color: white;
+            border: none;
+            padding: 24px 32px;
+            font-size: 1.3rem;
+            font-weight: 600;
+            border-radius: 60px;
+            width: 100%;
+            margin: 24px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-simulate-industrial::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn-simulate-industrial:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-simulate-industrial:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 30px 40px -10px rgba(59, 130, 246, 0.5);
+        }
+
+        /* ========== EXPLANATION CARD ========== */
+        .explanation-industrial {
+            background: var(--bg-card);
+            border-radius: 28px;
+            padding: 32px;
+            margin-top: 24px;
+            border: 1px solid var(--border);
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 1400px) {
+            .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+            .panel-grid-industrial { grid-template-columns: repeat(3, 1fr); }
+            .params-industrial { grid-template-columns: repeat(2, 1fr); }
         }
 
         @media (max-width: 992px) {
-            .grid { grid-template-columns: 1fr; }
-            .card-full { grid-column: span 1; }
-            .industrial-grid { grid-template-columns: repeat(2, 1fr); }
-            .panel-grid { grid-template-columns: repeat(3, 1fr); }
-        }
-
-        @media (max-width: 768px) {
-            body { padding: 10px; }
-            .header { flex-direction: column; text-align: center; gap: 15px; }
-            .live-grid { grid-template-columns: repeat(2, 1fr); }
-            .input-grid { grid-template-columns: repeat(2, 1fr); }
-            .charts-grid { grid-template-columns: 1fr; }
-            .analysis-grid { grid-template-columns: 1fr; }
+            .industrial-grid { grid-template-columns: 1fr; }
+            .charts-industrial { grid-template-columns: 1fr; }
+            .analysis-industrial { grid-template-columns: 1fr; }
+            .panel-specs { grid-template-columns: repeat(2, 1fr); }
         }
     </style>
 </head>
 <body>
     <div class="dashboard">
-        <!-- Header -->
-        <div class="header">
+        <!-- HEADER INDUSTRIAL -->
+        <div class="industrial-header">
             <div class="header-left">
-                <h1>⚡ PV Array Simulator Pro</h1>
-                <div class="subtitle">Advanced Photovoltaic System Analysis & Diagnostics</div>
+                <h1>⚡ PV ARRAY SIMULATOR INDUSTRIAL</h1>
+                <div class="header-badges">
+                    <span class="badge-industrial">🔧 IEC 61724:2021</span>
+                    <span class="badge-industrial">📊 Standar Pengujian PV</span>
+                    <span class="badge-industrial">🏭 Kelas 1 Presisi</span>
+                </div>
             </div>
-            <div class="header-right">
-                <span class="badge">📊 Standar IEC 61724</span>
-                <span class="badge">🔧 6 Model Panel</span>
-                <span class="live-time" id="liveTime">🟢 09:41 WIB</span>
+            <div class="live-badge" id="liveClock">⏱️ 00:00 WIB</div>
+        </div>
+
+        <!-- METRICS DASHBOARD -->
+        <div class="metrics-grid">
+            <div class="metric-card voltage-metric">
+                <div class="metric-label">
+                    <span>⚡</span> TEGANGAN OUTPUT
+                </div>
+                <div>
+                    <span class="metric-value" id="metricV">0.00</span>
+                    <span class="metric-unit">V</span>
+                </div>
+                <div class="metric-trend" id="trendV">
+                    <span>Nilai tunak</span>
+                </div>
+            </div>
+
+            <div class="metric-card current-metric">
+                <div class="metric-label">
+                    <span>🔌</span> ARUS OUTPUT
+                </div>
+                <div>
+                    <span class="metric-value" id="metricI">0.00</span>
+                    <span class="metric-unit">A</span>
+                </div>
+                <div class="metric-trend" id="trendI">
+                    <span>MPP: 0A</span>
+                </div>
+            </div>
+
+            <div class="metric-card power-metric">
+                <div class="metric-label">
+                    <span>🔋</span> DAYA OUTPUT
+                </div>
+                <div>
+                    <span class="metric-value" id="metricP">0.00</span>
+                    <span class="metric-unit">W</span>
+                </div>
+                <div class="metric-trend" id="trendP">
+                    <span>Efisiensi: 0%</span>
+                </div>
+            </div>
+
+            <div class="metric-card efficiency-metric">
+                <div class="metric-label">
+                    <span>📈</span> EFISIENSI SISTEM
+                </div>
+                <div>
+                    <span class="metric-value" id="metricEff">0.0</span>
+                    <span class="metric-unit">%</span>
+                </div>
+                <div class="metric-trend" id="trendTau">
+                    <span>τ = 0.50s</span>
+                </div>
             </div>
         </div>
 
-        <!-- Live Dashboard -->
-        <div class="card" style="margin-bottom: 20px;">
-            <div class="card-header">
-                <h2>📊 Real-Time Measurements</h2>
-                <span class="chip chip-primary">LIVE UPDATE</span>
+        <!-- PANEL SELECTOR INDUSTRIAL -->
+        <div class="panel-section">
+            <div class="section-title">
+                <h2>
+                    <span>🔋</span> 
+                    MODUL PV - SELEKTOR INDUSTRI
+                </h2>
+                <span class="badge-industrial">6 Model Tersertifikasi</span>
             </div>
-            <div class="live-grid">
-                <div class="live-item live-voltage">
-                    <div class="live-label">Output Voltage</div>
-                    <div><span class="live-number" id="liveVoltage">0.00</span><span class="live-unit">V</span></div>
-                    <div class="live-trend" id="voltageStatus">Steady State</div>
-                </div>
-                <div class="live-item live-current">
-                    <div class="live-label">Output Current</div>
-                    <div><span class="live-number" id="liveCurrent">0.00</span><span class="live-unit">A</span></div>
-                    <div class="live-trend" id="currentStatus">MPP: 0A</div>
-                </div>
-                <div class="live-item live-power">
-                    <div class="live-label">Output Power</div>
-                    <div><span class="live-number" id="livePower">0.00</span><span class="live-unit">W</span></div>
-                    <div class="live-trend" id="powerStatus">Efficiency: 0%</div>
-                </div>
-                <div class="live-item live-efficiency">
-                    <div class="live-label">Efficiency</div>
-                    <div><span class="live-number" id="liveEfficiency">0.0</span><span class="live-unit">%</span></div>
-                    <div class="live-trend" id="efficiencyStatus">τ = 0.5s</div>
-                </div>
-            </div>
-        </div>
 
-        <!-- Panel Selector -->
-        <div class="card" style="margin-bottom: 20px;">
-            <div class="card-header">
-                <h2>🔋 Solar Panel Model Selector</h2>
-                <span class="chip">6 MODELS AVAILABLE</span>
-            </div>
-            
-            <div class="panel-grid">
-                <button class="panel-btn active" id="panelKC200GT" onclick="selectPanel('kc200gt')">
-                    KC200GT
-                    <small>200W (Villalva)</small>
+            <div class="panel-grid-industrial">
+                <button class="panel-btn-industrial active" onclick="pilihPanel('kc200gt')" id="btnKC200GT">
+                    <span>🏭 KC200GT</span>
+                    <small>200W · Villalva</small>
                 </button>
-                <button class="panel-btn" id="panel250W" onclick="selectPanel('250w')">
-                    Panel 250W
-                    <small>Modern</small>
+                <button class="panel-btn-industrial" onclick="pilihPanel('250w')" id="btn250W">
+                    <span>⚡ 250W MODERN</span>
+                    <small>Grid-Tie</small>
                 </button>
-                <button class="panel-btn" id="panelMSX60" onclick="selectPanel('msx60')">
-                    MSX60
-                    <small>60W</small>
+                <button class="panel-btn-industrial" onclick="pilihPanel('msx60')" id="btnMSX60">
+                    <span>📚 MSX60</span>
+                    <small>60W · Edukasi</small>
                 </button>
-                <button class="panel-btn" id="panel100W" onclick="selectPanel('100w')">
-                    Panel 100W
-                    <small>12V</small>
+                <button class="panel-btn-industrial" onclick="pilihPanel('100w')" id="btn100W">
+                    <span>🔋 100W 12V</span>
+                    <small>Off-grid</small>
                 </button>
-                <button class="panel-btn" id="panel300W" onclick="selectPanel('300w')">
-                    Panel 300W
-                    <small>High Power</small>
+                <button class="panel-btn-industrial" onclick="pilihPanel('300w')" id="btn300W">
+                    <span>🏗️ 300W PRO</span>
+                    <small>Large Scale</small>
                 </button>
-                <button class="panel-btn" id="panelCustom" onclick="selectPanel('custom')">
-                    Custom
+                <button class="panel-btn-industrial" onclick="pilihPanel('custom')" id="btnCustom">
+                    <span>⚙️ CUSTOM</span>
                     <small>Manual</small>
                 </button>
             </div>
-            
-            <div class="panel-detail" id="panelDetail">
-                <div class="detail-group">
-                    <div class="detail-row">
-                        <span class="detail-label">Model:</span>
-                        <span class="detail-value" id="detailModel">KC200GT</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="detail-label">Source:</span>
-                        <span class="detail-value" id="detailSource">Villalva 2009</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="detail-label">Description:</span>
-                        <span class="detail-value" id="detailDesc">Panel 200W Standar</span>
-                    </div>
+
+            <div class="panel-specs" id="panelSpecs">
+                <div class="spec-item">
+                    <span class="spec-label">MODEL PANEL</span>
+                    <span class="spec-value" id="specModel">KC200GT</span>
                 </div>
-                <div class="detail-group">
-                    <div class="detail-row">
-                        <span class="detail-label">Pmax:</span>
-                        <span class="detail-value" id="detailPmax">200 W</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="detail-label">Vmp / Voc:</span>
-                        <span class="detail-value" id="detailVmp">26.3/32.9 V</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="detail-label">Imp / Isc:</span>
-                        <span class="detail-value" id="detailImp">7.61/8.21 A</span>
-                    </div>
+                <div class="spec-item">
+                    <span class="spec-label">SPESIFIKASI STC</span>
+                    <span class="spec-value" id="specStc">200W | 26.3V/7.61A</span>
                 </div>
-                <div class="detail-group">
-                    <div class="detail-row">
-                        <span class="detail-label">Ns (cells):</span>
-                        <span class="detail-value" id="detailNs">54</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="detail-label">Kv per cell:</span>
-                        <span class="detail-value" id="detailKv">-0.00228</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="detail-label">Ki per cell:</span>
-                        <span class="detail-value" id="detailKi">0.000059</span>
-                    </div>
+                <div class="spec-item">
+                    <span class="spec-label">KARAKTERISTIK</span>
+                    <span class="spec-value" id="specChar">Voc 32.9V | Isc 8.21A</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">KONFIGURASI SEL</span>
+                    <span class="spec-value" id="specCell">54 sel · Kv -0.123</span>
                 </div>
             </div>
         </div>
 
-        <!-- Input Grid -->
-        <div class="grid">
-            <!-- PV Configuration -->
-            <div class="card">
-                <div class="card-header">
-                    <h2>🔧 PV Array Configuration</h2>
-                    <span class="chip" id="panelNameBadge">KC200GT</span>
+        <!-- MAIN CONFIGURATION GRID -->
+        <div class="industrial-grid">
+            <!-- KONFIGURASI PV ARRAY -->
+            <div class="config-card">
+                <div class="config-header">
+                    <h2>⚙️ KONFIGURASI PV ARRAY</h2>
+                    <span class="badge-industrial" id="activePanel">KC200GT</span>
                 </div>
-                <div class="input-grid">
-                    <div class="input-field">
-                        <label>Irradiance (G)</label>
-                        <input type="number" id="irradiance" value="1000" min="0" max="1500" step="10">
-                        <div class="unit">W/m² · 0-1500</div>
+
+                <div class="config-grid">
+                    <div class="input-group-industrial">
+                        <label>IRADIASI (G)</label>
+                        <input type="number" id="irradiance" value="1000" step="10" min="0" max="1500">
+                        <div class="input-help">W/m² · 0 - 1500 · STC = 1000</div>
                     </div>
-                    <div class="input-field">
-                        <label>Temperature (T)</label>
-                        <input type="number" id="temperature" value="25" min="-10" max="80" step="1">
-                        <div class="unit">°C · -10 to 80</div>
+
+                    <div class="input-group-industrial">
+                        <label>SUHU (T)</label>
+                        <input type="number" id="temperature" value="25" step="1" min="-10" max="80">
+                        <div class="input-help">°C · -10 s/d 80 · STC = 25</div>
                     </div>
-                    <div class="input-field">
-                        <label>Series Cells (Ns)</label>
-                        <input type="number" id="seriesCells" value="54" min="1" max="100" step="1">
-                        <div class="unit">cells · 1-100</div>
+
+                    <div class="input-group-industrial">
+                        <label>SEL SERI (Ns)</label>
+                        <input type="number" id="seriesCells" value="54" step="1" min="1" max="200">
+                        <div class="input-help">Jumlah sel per string · Default 54</div>
                     </div>
-                    <div class="input-field">
-                        <label>Parallel Strings (Np)</label>
-                        <input type="number" id="parallelStrings" value="1" min="1" max="10" step="1">
-                        <div class="unit">strings · 1-10</div>
+
+                    <div class="input-group-industrial">
+                        <label>STRING PARALEL (Np)</label>
+                        <input type="number" id="parallelStrings" value="1" step="1" min="1" max="10">
+                        <div class="input-help">Jumlah string paralel · 1 - 10</div>
                     </div>
+                </div>
+
+                <div class="tf-industrial">
+                    <div class="tf-equation" id="tfEquation">G(s) = 1 / (0.5s + 1)</div>
+                    <div class="tf-params" id="tfParams">τ = 0.50 s · K = 1.00</div>
                 </div>
             </div>
 
-            <!-- Transfer Function -->
-            <div class="card">
-                <div class="card-header">
-                    <h2>⚙️ Transfer Function & Sensor</h2>
-                    <span class="chip">1st Order System</span>
+            <!-- FUNGSI TRANSFER & SENSOR -->
+            <div class="config-card">
+                <div class="config-header">
+                    <h2>📈 FUNGSI TRANSFER & SENSOR</h2>
+                    <span class="badge-industrial">Sistem Orde-1</span>
                 </div>
-                <div class="tf-display" id="tfDisplay">
-                    G(s) = 1/(0.5s + 1)
+
+                <div class="config-grid">
+                    <div class="input-group-industrial">
+                        <label>PEMBILANG (b₀)</label>
+                        <input type="number" id="tfNum" value="1" step="0.1" min="0.1" max="10">
+                    </div>
+
+                    <div class="input-group-industrial">
+                        <label>PENYEBUT (a₁)</label>
+                        <input type="number" id="tfA1" value="0.5" step="0.1" min="0.1" max="5">
+                    </div>
+
+                    <div class="input-group-industrial">
+                        <label>PENYEBUT (a₀)</label>
+                        <input type="number" id="tfA0" value="1" step="0.1" min="0.1" max="10">
+                    </div>
+
+                    <div class="input-group-industrial">
+                        <label>GAIN SENSOR</label>
+                        <input type="number" id="sensorGain" value="1" step="0.1" min="0.1" max="10">
+                    </div>
                 </div>
-                <div class="input-grid">
-                    <div class="input-field">
-                        <label>Numerator (b₀)</label>
-                        <input type="text" id="tfNum" value="1">
-                    </div>
-                    <div class="input-field">
-                        <label>Denominator (a₁, a₀)</label>
-                        <input type="text" id="tfDen" value="0.5, 1">
-                    </div>
-                    <div class="input-field">
-                        <label>Sensor Gain</label>
-                        <input type="number" id="sensorGain" value="1" min="0.1" max="10" step="0.1">
-                    </div>
-                    <div class="input-field">
-                        <label>Simulation Time</label>
-                        <input type="number" id="simTime" value="5" min="0.5" max="20" step="0.5">
-                    </div>
+
+                <div class="input-group-industrial" style="margin-top: 20px;">
+                    <label>WAKTU SIMULASI (detik)</label>
+                    <input type="number" id="simTime" value="5" step="0.5" min="1" max="20">
+                    <div class="input-help">Durasi simulasi · 1 - 20 detik</div>
                 </div>
             </div>
         </div>
 
-        <!-- Simulate Button -->
-        <button class="simulate-btn" id="simulateBtn">
-            🔄 RUN COMPREHENSIVE SYSTEM ANALYSIS
+        <!-- SIMULATE BUTTON -->
+        <button class="btn-simulate-industrial" onclick="updateSimulasi()">
+            🔄 UPDATE ANALISIS SISTEM REAL-TIME
         </button>
 
-        <!-- Charts -->
-        <div class="charts-grid">
-            <div class="chart-card">
-                <div class="chart-header">
-                    <h3>📈 Voltage Response (V)</h3>
+        <!-- CHARTS INDUSTRIAL -->
+        <div class="charts-industrial">
+            <div class="chart-card-industrial">
+                <div class="chart-header-industrial">
+                    <span style="font-weight:600;">📈 RESPON TEGANGAN</span>
                     <span class="chart-badge badge-voltage">V</span>
                 </div>
-                <div class="chart-container">
+                <div class="chart-container-industrial">
                     <canvas id="voltageChart"></canvas>
                 </div>
-                <div class="chart-footer">
-                    <div>Steady: <span id="voltageSteady">0.00</span>V</div>
-                    <div>τ: <span id="voltageTau">0.50</span>s</div>
-                    <div>Max: <span id="voltageMax">0.00</span>V</div>
+                <div class="chart-footer-industrial">
+                    <div>Tunak: <span id="steadyV">0.00</span>V</div>
+                    <div>τ: <span id="tauV">0.50</span>s</div>
+                    <div>Maks: <span id="maxV">0.00</span>V</div>
                 </div>
             </div>
 
-            <div class="chart-card">
-                <div class="chart-header">
-                    <h3>⚡ Current Response (A)</h3>
+            <div class="chart-card-industrial">
+                <div class="chart-header-industrial">
+                    <span style="font-weight:600;">⚡ RESPON ARUS</span>
                     <span class="chart-badge badge-current">A</span>
                 </div>
-                <div class="chart-container">
+                <div class="chart-container-industrial">
                     <canvas id="currentChart"></canvas>
                 </div>
-                <div class="chart-footer">
-                    <div>Steady: <span id="currentSteady">0.00</span>A</div>
-                    <div>Rise: <span id="currentRise">0.30</span>s</div>
-                    <div>Max: <span id="currentMax">0.00</span>A</div>
+                <div class="chart-footer-industrial">
+                    <div>Tunak: <span id="steadyI">0.00</span>A</div>
+                    <div>Naik: <span id="riseI">0.00</span>s</div>
+                    <div>Maks: <span id="maxI">0.00</span>A</div>
                 </div>
             </div>
 
-            <div class="chart-card">
-                <div class="chart-header">
-                    <h3>🔋 Power Response (W)</h3>
+            <div class="chart-card-industrial">
+                <div class="chart-header-industrial">
+                    <span style="font-weight:600;">🔋 RESPON DAYA</span>
                     <span class="chart-badge badge-power">W</span>
                 </div>
-                <div class="chart-container">
+                <div class="chart-container-industrial">
                     <canvas id="powerChart"></canvas>
                 </div>
-                <div class="chart-footer">
-                    <div>Steady: <span id="powerSteady">0.00</span>W</div>
-                    <div>Peak: <span id="powerPeak">0.00</span>W</div>
-                    <div>MPPT: <span id="powerMppt">0.0</span>%</div>
+                <div class="chart-footer-industrial">
+                    <div>Tunak: <span id="steadyP">0.00</span>W</div>
+                    <div>Puncak: <span id="peakP">0.00</span>W</div>
+                    <div>MPPT: <span id="mpptEff">0.0</span>%</div>
                 </div>
             </div>
         </div>
 
-        <!-- Industrial Parameters -->
-        <div class="card" style="margin-bottom: 20px;">
-            <div class="card-header">
-                <h2>🏭 Industrial Parameters (IEC 61724)</h2>
-                <span class="chip">Standard Test Conditions</span>
+        <!-- PARAMETERS INDUSTRIAL -->
+        <div class="params-industrial">
+            <div class="param-card">
+                <h3>🏭 PV ARRAY (STC)</h3>
+                <div class="param-row">
+                    <span class="param-name">Vmp (Tegangan MPP)</span>
+                    <span><span class="param-value" id="pVmp">0.0</span><span class="param-unit">V</span></span>
+                </div>
+                <div class="param-row">
+                    <span class="param-name">Imp (Arus MPP)</span>
+                    <span><span class="param-value" id="pImp">0.0</span><span class="param-unit">A</span></span>
+                </div>
+                <div class="param-row">
+                    <span class="param-name">Pmp (Daya MPP)</span>
+                    <span><span class="param-value" id="pPmp">0.0</span><span class="param-unit">W</span></span>
+                </div>
+                <div class="param-row">
+                    <span class="param-name">Voc (Tegangan Buka)</span>
+                    <span><span class="param-value" id="pVoc">0.0</span><span class="param-unit">V</span></span>
+                </div>
+                <div class="param-row">
+                    <span class="param-name">Isc (Arus Pendek)</span>
+                    <span><span class="param-value" id="pIsc">0.0</span><span class="param-unit">A</span></span>
+                </div>
             </div>
-            <div class="industrial-grid">
-                <div class="param-group">
-                    <div class="param-group-title">PV Array (STC)</div>
-                    <div class="param-row">
-                        <span class="param-name">Vmp (MPP Voltage)</span>
-                        <span><span class="param-number" id="paramVmp">0.0</span><span class="param-unit-small">V</span></span>
-                    </div>
-                    <div class="param-row">
-                        <span class="param-name">Imp (MPP Current)</span>
-                        <span><span class="param-number" id="paramImp">0.0</span><span class="param-unit-small">A</span></span>
-                    </div>
-                    <div class="param-row">
-                        <span class="param-name">Pmp (MPP Power)</span>
-                        <span><span class="param-number" id="paramPmp">0.0</span><span class="param-unit-small">W</span></span>
-                    </div>
-                    <div class="param-row">
-                        <span class="param-name">Voc (Open Circuit)</span>
-                        <span><span class="param-number" id="paramVoc">0.0</span><span class="param-unit-small">V</span></span>
-                    </div>
-                    <div class="param-row">
-                        <span class="param-name">Isc (Short Circuit)</span>
-                        <span><span class="param-number" id="paramIsc">0.0</span><span class="param-unit-small">A</span></span>
-                    </div>
-                </div>
 
-                <div class="param-group">
-                    <div class="param-group-title">Output Measurements</div>
-                    <div class="param-row">
-                        <span class="param-name">Vout (Steady)</span>
-                        <span><span class="param-number" id="paramVout">0.0</span><span class="param-unit-small">V</span></span>
-                    </div>
-                    <div class="param-row">
-                        <span class="param-name">Iout (Steady)</span>
-                        <span><span class="param-number" id="paramIout">0.0</span><span class="param-unit-small">A</span></span>
-                    </div>
-                    <div class="param-row">
-                        <span class="param-name">Pout (Steady)</span>
-                        <span><span class="param-number" id="paramPout">0.0</span><span class="param-unit-small">W</span></span>
-                    </div>
-                    <div class="param-row">
-                        <span class="param-name">Efficiency (η)</span>
-                        <span><span class="param-number" id="paramEta">0.0</span><span class="param-unit-small">%</span></span>
-                    </div>
-                    <div class="param-row">
-                        <span class="param-name">Power Loss</span>
-                        <span><span class="param-number" id="paramLoss">0.0</span><span class="param-unit-small">W</span></span>
-                    </div>
+            <div class="param-card">
+                <h3>📊 PENGUKURAN OUTPUT</h3>
+                <div class="param-row">
+                    <span class="param-name">Vout (Tunak)</span>
+                    <span><span class="param-value" id="pVout">0.0</span><span class="param-unit">V</span></span>
                 </div>
-
-                <div class="param-group">
-                    <div class="param-group-title">Time Analysis</div>
-                    <div class="param-row">
-                        <span class="param-name">Time Constant (τ)</span>
-                        <span><span class="param-number" id="paramTau">0.50</span><span class="param-unit-small">s</span></span>
-                    </div>
-                    <div class="param-row">
-                        <span class="param-name">Rise Time (Tr)</span>
-                        <span><span class="param-number" id="paramRise">0.00</span><span class="param-unit-small">s</span></span>
-                    </div>
-                    <div class="param-row">
-                        <span class="param-name">Settling Time (2%)</span>
-                        <span><span class="param-number" id="paramSettle">0.00</span><span class="param-unit-small">s</span></span>
-                    </div>
-                    <div class="param-row">
-                        <span class="param-name">Peak Time</span>
-                        <span><span class="param-number" id="paramPeak">0.00</span><span class="param-unit-small">s</span></span>
-                    </div>
-                    <div class="param-row">
-                        <span class="param-name">Overshoot</span>
-                        <span><span class="param-number" id="paramOvershoot">0.0</span><span class="param-unit-small">%</span></span>
-                    </div>
+                <div class="param-row">
+                    <span class="param-name">Iout (Tunak)</span>
+                    <span><span class="param-value" id="pIout">0.0</span><span class="param-unit">A</span></span>
                 </div>
+                <div class="param-row">
+                    <span class="param-name">Pout (Tunak)</span>
+                    <span><span class="param-value" id="pPout">0.0</span><span class="param-unit">W</span></span>
+                </div>
+                <div class="param-row">
+                    <span class="param-name">Efisiensi (η)</span>
+                    <span><span class="param-value" id="pEta">0.0</span><span class="param-unit">%</span></span>
+                </div>
+                <div class="param-row">
+                    <span class="param-name">Rugi Daya</span>
+                    <span><span class="param-value" id="pLoss">0.0</span><span class="param-unit">W</span></span>
+                </div>
+            </div>
 
-                <div class="param-group">
-                    <div class="param-group-title">Environmental</div>
-                    <div class="param-row">
-                        <span class="param-name">Irradiance</span>
-                        <span><span class="param-number" id="paramG">1000</span><span class="param-unit-small">W/m²</span></span>
-                    </div>
-                    <div class="param-row">
-                        <span class="param-name">Temperature</span>
-                        <span><span class="param-number" id="paramT">25</span><span class="param-unit-small">°C</span></span>
-                    </div>
-                    <div class="param-row">
-                        <span class="param-name">NOCT</span>
-                        <span><span class="param-number">45</span><span class="param-unit-small">°C</span></span>
-                    </div>
-                    <div class="param-row">
-                        <span class="param-name">Air Mass</span>
-                        <span><span class="param-number">1.5</span></span>
-                    </div>
+            <div class="param-card">
+                <h3>⏱️ ANALISIS WAKTU</h3>
+                <div class="param-row">
+                    <span class="param-name">Konstanta Waktu (τ)</span>
+                    <span><span class="param-value" id="pTau">0.5</span><span class="param-unit">s</span></span>
+                </div>
+                <div class="param-row">
+                    <span class="param-name">Waktu Naik (Tr)</span>
+                    <span><span class="param-value" id="pRise">0.0</span><span class="param-unit">s</span></span>
+                </div>
+                <div class="param-row">
+                    <span class="param-name">Waktu Settling (2%)</span>
+                    <span><span class="param-value" id="pSettle">0.0</span><span class="param-unit">s</span></span>
+                </div>
+                <div class="param-row">
+                    <span class="param-name">Waktu Puncak</span>
+                    <span><span class="param-value" id="pPeak">0.0</span><span class="param-unit">s</span></span>
+                </div>
+                <div class="param-row">
+                    <span class="param-name">Overshoot</span>
+                    <span><span class="param-value" id="pOver">0.0</span><span class="param-unit">%</span></span>
+                </div>
+            </div>
+
+            <div class="param-card">
+                <h3>🌍 KONDISI LINGKUNGAN</h3>
+                <div class="param-row">
+                    <span class="param-name">Iradiansi (G)</span>
+                    <span><span class="param-value" id="pG">1000</span><span class="param-unit">W/m²</span></span>
+                </div>
+                <div class="param-row">
+                    <span class="param-name">Suhu (T)</span>
+                    <span><span class="param-value" id="pT">25</span><span class="param-unit">°C</span></span>
+                </div>
+                <div class="param-row">
+                    <span class="param-name">NOCT</span>
+                    <span><span class="param-value">45</span><span class="param-unit">°C</span></span>
+                </div>
+                <div class="param-row">
+                    <span class="param-name">Air Mass</span>
+                    <span><span class="param-value">1.5</span></span>
                 </div>
             </div>
         </div>
 
-        <!-- Analysis Grid -->
-        <div class="analysis-grid">
-            <!-- System Analysis -->
-            <div class="analysis-card">
+        <!-- ANALYSIS & FLOW -->
+        <div class="analysis-industrial">
+            <div class="analysis-card-industrial">
                 <div class="analysis-title">
-                    <h3>🔍 System Analysis & Diagnostics</h3>
+                    <span>🔍</span> ANALISIS SISTEM & DIAGNOSTIK
                 </div>
-                <div class="analysis-content" id="systemAnalysis">
-                    Analyzing system performance...
+                <div class="analysis-text" id="analysisText">
+                    Menganalisis kinerja sistem...
                 </div>
-                <div class="status-grid" id="systemStatus">
-                    <div class="status-item">
-                        <span class="status-label">System Status</span>
-                        <span class="status-value status-good" id="statusSystem">Optimal</span>
+                <div class="status-grid-industrial" id="statusGrid">
+                    <div class="status-item-industrial">
+                        <span class="status-label">Status Sistem</span>
+                        <span class="status-value-industrial status-good" id="statusSystem">Optimal</span>
                     </div>
-                    <div class="status-item">
+                    <div class="status-item-industrial">
                         <span class="status-label">MPPT Tracking</span>
-                        <span class="status-value status-good" id="statusMPPT">98.5%</span>
+                        <span class="status-value-industrial status-good" id="statusMPPT">98.5%</span>
                     </div>
-                    <div class="status-item">
-                        <span class="status-label">Power Quality</span>
-                        <span class="status-value status-good" id="statusPQ">Good</span>
+                    <div class="status-item-industrial">
+                        <span class="status-label">Kualitas Daya</span>
+                        <span class="status-value-industrial status-good" id="statusPQ">Baik</span>
                     </div>
-                    <div class="status-item">
-                        <span class="status-label">Stability</span>
-                        <span class="status-value status-good" id="statusStability">Stable</span>
+                    <div class="status-item-industrial">
+                        <span class="status-label">Stabilitas</span>
+                        <span class="status-value-industrial status-good" id="statusStab">Stabil</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Current Flow -->
-            <div class="flow-card">
-                <div class="flow-row">
-                    <span class="flow-label">⚡ Real-Time Current Flow</span>
-                    <span class="flow-value" id="flowCurrent">0.00 A</span>
+            <div class="flow-card-industrial">
+                <div class="flow-header">
+                    <span class="analysis-title">⚡ ALIRAN ARUS REAL-TIME</span>
+                    <span class="flow-value-industrial" id="flowCurrent">0.00 A</span>
                 </div>
-                <div class="flow-path">
-                    <span class="path-chip">PV Array →</span>
-                    <span class="path-chip">Voltage Sensor →</span>
-                    <span class="path-chip">PS Converter →</span>
-                    <span class="path-chip">Transfer Function →</span>
-                    <span class="path-chip">Scope</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Detailed Results -->
-        <div class="explanation-card">
-            <div class="explanation-title">
-                <h3>📊 Current Simulation Results</h3>
-            </div>
-            <div class="explanation-text" id="detailedResults">
-                <p><span class="analysis-highlight" id="resultSummary">Initializing simulation...</span></p>
-                
-                <div class="bullet-point">
-                    <div class="bullet"></div>
-                    <span><strong>PV Array Output:</strong> <span id="resultPv">Vmp=0V, Imp=0A, Pmp=0W</span></span>
-                </div>
-                
-                <div class="bullet-point">
-                    <div class="bullet"></div>
-                    <span><strong>System Output:</strong> <span id="resultOut">V=0V, I=0A, P=0W</span></span>
-                </div>
-                
-                <div class="bullet-point">
-                    <div class="bullet"></div>
-                    <span><strong>Dynamic Performance:</strong> <span id="resultDynamic">τ=0.5s, Tr=0s, Ts=0s</span></span>
-                </div>
-                
-                <div class="bullet-point">
-                    <div class="bullet"></div>
-                    <span><strong>Efficiency Analysis:</strong> <span id="resultEfficiency">η=0%</span></span>
-                </div>
-                
-                <div class="bullet-point">
-                    <div class="bullet"></div>
-                    <span><strong>Power Loss:</strong> <span id="resultLoss">0W</span> (due to TF dynamics)</span>
+                <div class="flow-path-industrial">
+                    <span class="path-chip-industrial">PV ARRAY</span>
+                    <span class="path-chip-industrial">SENSOR V</span>
+                    <span class="path-chip-industrial">PS CONVERTER</span>
+                    <span class="path-chip-industrial">TRANSFER FCN</span>
+                    <span class="path-chip-industrial">SCOPE</span>
                 </div>
             </div>
         </div>
 
-        <!-- System Explanation -->
-        <div class="explanation-card">
-            <div class="explanation-title">
-                <h3>📚 Comprehensive System Explanation</h3>
+        <!-- DETAILED RESULTS -->
+        <div class="details-industrial">
+            <div class="config-header">
+                <h2>📊 HASIL SIMULASI DETAIL</h2>
+                <span class="badge-industrial" id="simTimeDisplay">t = 5.0s</span>
             </div>
-            <div class="explanation-text" id="completeExplanation">
-                <p><span class="analysis-highlight">📋 System Overview:</span> This simulator models a configurable PV array connected to a first-order transfer function representing inverter/converter dynamics.</p>
-                
-                <div class="bullet-point">
-                    <div class="bullet"></div>
-                    <span><strong>🔧 PV Array Model:</strong> Based on IEC 60904 standard with temperature and irradiance correction.</span>
+            <div class="details-grid" id="detailResults">
+                <div class="bullet-industrial">
+                    <div class="bullet-point-industrial"></div>
+                    <span><strong>Output PV Array:</strong> <span id="detailPv">Vmp=0V, Imp=0A, Pmp=0W</span></span>
                 </div>
-                
-                <div class="bullet-point">
-                    <div class="bullet"></div>
-                    <span><strong>⚙️ Transfer Function:</strong> G(s) = b₀/(a₁s + a₀) represents system dynamics. Time constant τ = a₁/a₀ determines response speed.</span>
+                <div class="bullet-industrial">
+                    <div class="bullet-point-industrial"></div>
+                    <span><strong>Output Sistem (setelah TF):</strong> <span id="detailOut">V=0V, I=0A, P=0W</span></span>
                 </div>
-                
-                <div class="bullet-point">
-                    <div class="bullet"></div>
-                    <span><strong>📊 Output Analysis:</strong> System exhibits first-order step response characteristics with parameters like rise time, settling time, and steady-state values.</span>
+                <div class="bullet-industrial">
+                    <div class="bullet-point-industrial"></div>
+                    <span><strong>Kinerja Dinamik:</strong> <span id="detailDyn">τ=0.5s, Tr=0s, Ts=0s</span></span>
                 </div>
-                
-                <div class="bullet-point">
-                    <div class="bullet"></div>
-                    <span><strong>💡 Physical Interpretation:</strong> The transfer function acts as a low-pass filter, smoothing rapid changes in PV output. This represents combined effects of:</span>
+                <div class="bullet-industrial">
+                    <div class="bullet-point-industrial"></div>
+                    <span><strong>Efisiensi:</strong> <span id="detailEff">0%</span></span>
                 </div>
-                <div style="margin-left: 30px; margin-top: 8px; font-size: 0.9rem;">
-                    • DC-DC converter dynamics<br>
-                    • Inverter response time<br>
-                    • Output filter characteristics<br>
-                    • Control loop bandwidth
+                <div class="bullet-industrial">
+                    <div class="bullet-point-industrial"></div>
+                    <span><strong>Rugi Daya (akibat TF):</strong> <span id="detailLoss">0W</span></span>
                 </div>
             </div>
         </div>
 
-        <!-- How to Read Charts -->
-        <div class="explanation-card">
-            <div class="explanation-title">
-                <h3>📖 How to Read the Charts</h3>
+        <!-- EXPLANATION -->
+        <div class="explanation-industrial">
+            <div class="config-header">
+                <h2>📚 DOKUMENTASI TEKNIS SISTEM</h2>
+                <span class="badge-industrial">IEC 60904 · IEC 61724</span>
             </div>
-            <div class="explanation-text">
-                <div class="bullet-point">
-                    <div class="bullet"></div>
-                    <span><strong>Voltage Chart (Blue):</strong> Shows exponential rise to steady-state. Time constant τ is time to reach 63.2% of final value.</span>
-                </div>
-                <div class="bullet-point">
-                    <div class="bullet"></div>
-                    <span><strong>Current Chart (Red):</strong> Usually responds faster than voltage. Rise time is from 10% to 90% of final value.</span>
-                </div>
-                <div class="bullet-point">
-                    <div class="bullet"></div>
-                    <span><strong>Power Chart (Green):</strong> Product of voltage and current. MPPT efficiency shows how close output is to PV maximum power point.</span>
-                </div>
-                <div class="bullet-point">
-                    <div class="bullet"></div>
-                    <span><strong>X-Axis (Time):</strong> Shows time in seconds. Total simulation time adjustable from 0.5 - 20 seconds.</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Glossary -->
-        <div class="explanation-card">
-            <div class="explanation-title">
-                <h3>📚 Terminology Glossary</h3>
-            </div>
-            <div class="explanation-text">
-                <div class="bullet-point">
-                    <div class="bullet"></div>
-                    <span><strong>MPP (Maximum Power Point):</strong> Operating point where solar panel produces maximum power.</span>
-                </div>
-                <div class="bullet-point">
-                    <div class="bullet"></div>
-                    <span><strong>Vmp:</strong> Voltage at maximum power point.</span>
-                </div>
-                <div class="bullet-point">
-                    <div class="bullet"></div>
-                    <span><strong>Imp:</strong> Current at maximum power point.</span>
-                </div>
-                <div class="bullet-point">
-                    <div class="bullet"></div>
-                    <span><strong>Voc:</strong> Open circuit voltage (no load).</span>
-                </div>
-                <div class="bullet-point">
-                    <div class="bullet"></div>
-                    <span><strong>Isc:</strong> Short circuit current.</span>
-                </div>
-                <div class="bullet-point">
-                    <div class="bullet"></div>
-                    <span><strong>STC (Standard Test Conditions):</strong> 1000W/m², 25°C, AM1.5.</span>
-                </div>
-                <div class="bullet-point">
-                    <div class="bullet"></div>
-                    <span><strong>τ (Tau):</strong> Time constant, time to reach 63.2% of final value.</span>
-                </div>
-                <div class="bullet-point">
-                    <div class="bullet"></div>
-                    <span><strong>Rise Time (Tr):</strong> Time from 10% to 90% of final value.</span>
-                </div>
-                <div class="bullet-point">
-                    <div class="bullet"></div>
-                    <span><strong>Settling Time (Ts):</strong> Time to reach and stay within 2% of final value.</span>
+            <div class="analysis-text" id="explanationText">
+                <p><span class="analysis-highlight">📋 RINGKASAN SISTEM:</span> Simulator ini memodelkan array PV dengan konfigurasi yang dapat diatur, terhubung ke fungsi transfer orde-1 yang merepresentasikan dinamika inverter/kontroler.</p>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
+                    <div>
+                        <div class="bullet-industrial">
+                            <div class="bullet-point-industrial"></div>
+                            <span><strong>🔧 MODEL PV ARRAY:</strong> Berdasarkan standar IEC 60904 dengan koreksi suhu dan iradiansi. Parameter diambil dari paper Villalva 2009 untuk panel KC200GT.</span>
+                        </div>
+                        <div class="bullet-industrial">
+                            <div class="bullet-point-industrial"></div>
+                            <span><strong>⚙️ FUNGSI TRANSFER:</strong> G(s) = b₀/(a₁s + a₀) merepresentasikan respons dinamik sistem. Konstanta waktu τ = a₁/a₀ menentukan kecepatan respons.</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="bullet-industrial">
+                            <div class="bullet-point-industrial"></div>
+                            <span><strong>📊 ANALISIS OUTPUT:</strong> Sistem menunjukkan karakteristik respons step orde-1 dengan parameter seperti waktu naik (rise time), waktu settling, dan nilai tunak.</span>
+                        </div>
+                        <div class="bullet-industrial">
+                            <div class="bullet-point-industrial"></div>
+                            <span><strong>💡 INTERPRETASI FISIK:</strong> Fungsi transfer bertindak sebagai low-pass filter yang menghaluskan perubahan cepat dari output PV. Ini merepresentasikan efek gabungan dari dinamika konverter DC-DC, waktu respons inverter, karakteristik filter output, dan bandwidth kontrol loop.</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Update waktu
-        function updateTime() {
-            const now = new Date();
-            const hours = now.getHours().toString().padStart(2,'0');
-            const minutes = now.getMinutes().toString().padStart(2,'0');
-            document.getElementById('liveTime').innerHTML = `🟢 ${hours}:${minutes} WIB`;
-        }
-        updateTime();
-        setInterval(updateTime, 1000);
-
-        // Initialize Charts
-        const voltageCtx = document.getElementById('voltageChart').getContext('2d');
-        const currentCtx = document.getElementById('currentChart').getContext('2d');
-        const powerCtx = document.getElementById('powerChart').getContext('2d');
-
-        const chartOptions = {
-            responsive: true,
-            maintainAspectRatio: false,
-            animation: false,
-            plugins: { legend: { display: false } },
-            scales: {
-                x: { 
-                    ticks: { maxTicksLimit: 6, font: { size: 10 } },
-                    grid: { display: true, color: '#E2E8F0' }
-                },
-                y: { 
-                    ticks: { maxTicksLimit: 5, font: { size: 10 } },
-                    grid: { color: '#E2E8F0' }
-                }
-            },
-            elements: { line: { borderWidth: 2.5 }, point: { radius: 0 } }
-        };
-
-        const voltageChart = new Chart(voltageCtx, {
-            type: 'line',
-            data: { labels: [], datasets: [{ data: [], borderColor: '#2563EB', backgroundColor: 'rgba(37,99,235,0.05)', fill: true }] },
-            options: chartOptions
-        });
-
-        const currentChart = new Chart(currentCtx, {
-            type: 'line',
-            data: { labels: [], datasets: [{ data: [], borderColor: '#DC2626', backgroundColor: 'rgba(220,38,38,0.05)', fill: true }] },
-            options: chartOptions
-        });
-
-        const powerChart = new Chart(powerCtx, {
-            type: 'line',
-            data: { labels: [], datasets: [{ data: [], borderColor: '#16A34A', backgroundColor: 'rgba(22,163,74,0.05)', fill: true }] },
-            options: chartOptions
-        });
-
-        // DATABASE PANEL SURYA
-        const panelDatabase = {
+        // ========== DATABASE PANEL INDUSTRIAL ==========
+        const PANELS = {
             kc200gt: {
-                name: 'KC200GT',
-                source: 'Villalva 2009',
-                desc: 'Panel 200W Standar Industri',
-                V_oc_ref: 0.609,
-                I_sc_ref: 8.21,
-                k_v: -0.00228,
-                k_i: 0.000059,
-                default_ns: 54,
-                vmp_ref: 26.3,
-                imp_ref: 7.61,
-                pmax: 200.143
+                nama: 'KC200GT',
+                sumber: 'Villalva 2009',
+                desc: 'Panel 200W Standar Industri · Sertifikasi IEC',
+                Voc: 32.9,
+                Isc: 8.21,
+                Vmp: 26.3,
+                Imp: 7.61,
+                Ns: 54,
+                Kv: -0.123,
+                Ki: 0.0032
             },
             '250w': {
-                name: 'Panel 250W',
-                source: 'Modern Panel',
-                desc: 'Panel 250W - Aplikasi Grid-Tie',
-                V_oc_ref: 0.62,
-                I_sc_ref: 8.8,
-                k_v: -0.0023,
-                k_i: 0.00045,
-                default_ns: 60,
-                vmp_ref: 30.5,
-                imp_ref: 8.2,
-                pmax: 250
+                nama: '250W MODERN',
+                sumber: 'Modern Panel',
+                desc: 'Panel 250W Grid-Tie · Efisiensi Tinggi',
+                Voc: 37.2,
+                Isc: 8.8,
+                Vmp: 30.5,
+                Imp: 8.2,
+                Ns: 60,
+                Kv: -0.138,
+                Ki: 0.004
             },
             msx60: {
-                name: 'MSX60',
-                source: 'Solarex',
-                desc: 'Panel 60W - Edukasi',
-                V_oc_ref: 0.586,
-                I_sc_ref: 3.8,
-                k_v: -0.0023,
-                k_i: 0.0004,
-                default_ns: 36,
-                vmp_ref: 17.1,
-                imp_ref: 3.5,
-                pmax: 60
+                nama: 'MSX60',
+                sumber: 'Solarex',
+                desc: 'Panel 60W · Aplikasi Edukasi & Laboratorium',
+                Voc: 21.1,
+                Isc: 3.8,
+                Vmp: 17.1,
+                Imp: 3.5,
+                Ns: 36,
+                Kv: -0.08,
+                Ki: 0.0017
             },
             '100w': {
-                name: 'Panel 100W',
-                source: '12V Panel',
-                desc: 'Panel 100W - Off-grid',
-                V_oc_ref: 0.61,
-                I_sc_ref: 5.5,
-                k_v: -0.0022,
-                k_i: 0.0003,
-                default_ns: 36,
-                vmp_ref: 18.0,
-                imp_ref: 5.0,
-                pmax: 100
+                nama: '100W 12V',
+                sumber: 'Off-grid Panel',
+                desc: 'Panel 100W · Sistem 12V Off-grid',
+                Voc: 22.0,
+                Isc: 5.5,
+                Vmp: 18.0,
+                Imp: 5.0,
+                Ns: 36,
+                Kv: -0.085,
+                Ki: 0.002
             },
             '300w': {
-                name: 'Panel 300W',
-                source: 'High Power',
-                desc: 'Panel 300W - Large Scale',
-                V_oc_ref: 0.63,
-                I_sc_ref: 9.5,
-                k_v: -0.0024,
-                k_i: 0.0005,
-                default_ns: 72,
-                vmp_ref: 36.5,
-                imp_ref: 8.8,
-                pmax: 300
+                nama: '300W PRO',
+                sumber: 'High Power',
+                desc: 'Panel 300W · Large Scale Solar Farm',
+                Voc: 45.0,
+                Isc: 9.5,
+                Vmp: 36.5,
+                Imp: 8.8,
+                Ns: 72,
+                Kv: -0.15,
+                Ki: 0.005
             },
             custom: {
-                name: 'Custom',
-                source: 'Manual Setting',
-                desc: 'Custom Panel - Adjustable',
-                V_oc_ref: 0.62,
-                I_sc_ref: 8.8,
-                k_v: -0.0023,
-                k_i: 0.00045,
-                default_ns: 60,
-                vmp_ref: 30.5,
-                imp_ref: 8.2,
-                pmax: 250
+                nama: 'CUSTOM',
+                sumber: 'Manual',
+                desc: 'Konfigurasi Manual · Pengaturan Bebas',
+                Voc: 37.2,
+                Isc: 8.8,
+                Vmp: 30.5,
+                Imp: 8.2,
+                Ns: 60,
+                Kv: -0.138,
+                Ki: 0.004
             }
         };
 
-        // Variable untuk menyimpan panel aktif
-        let currentPanel = 'kc200gt';
+        // ========== VARIABLES ==========
+        let panelAktif = 'kc200gt';
+        let voltageChart, currentChart, powerChart;
 
-        // Fungsi untuk memilih panel
-        window.selectPanel = function(panelId) {
-            // Update active state buttons
-            document.querySelectorAll('.panel-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            
-            const buttonId = panelId === 'kc200gt' ? 'panelKC200GT' : 
-                             panelId === '250w' ? 'panel250W' :
-                             panelId === 'msx60' ? 'panelMSX60' :
-                             panelId === '100w' ? 'panel100W' :
-                             panelId === '300w' ? 'panel300W' : 'panelCustom';
-            
-            document.getElementById(buttonId).classList.add('active');
-            
-            // Update current panel
-            currentPanel = panelId;
-            const panel = panelDatabase[panelId];
-            
-            // Update panel detail
-            document.getElementById('detailModel').innerText = panel.name;
-            document.getElementById('detailSource').innerText = panel.source;
-            document.getElementById('detailDesc').innerText = panel.desc;
-            document.getElementById('detailPmax').innerText = panel.pmax + ' W';
-            document.getElementById('detailVmp').innerText = panel.vmp_ref + '/' + (panel.V_oc_ref * panel.default_ns).toFixed(1) + ' V';
-            document.getElementById('detailImp').innerText = panel.imp_ref + '/' + panel.I_sc_ref + ' A';
-            document.getElementById('detailNs').innerText = panel.default_ns;
-            document.getElementById('detailKv').innerText = panel.k_v.toFixed(5);
-            document.getElementById('detailKi').innerText = panel.k_i.toFixed(6);
-            
-            // Update input fields
-            document.getElementById('seriesCells').value = panel.default_ns;
-            document.getElementById('panelNameBadge').innerText = panel.name;
-            
-            // Update perhitungan
-            updateSimulation();
-        };
-
-        // Model PV dengan database panel
-        function calculateIndustrialPV(irradiance, temperature, series, parallel) {
-            const panel = panelDatabase[currentPanel];
-            
-            const V_oc_ref = panel.V_oc_ref;
-            const I_sc_ref = panel.I_sc_ref;
-            const k_v = panel.k_v;
-            const k_i = panel.k_i;
-            const T_ref = 25;
-            const G_ref = 1000;
-            
-            const delta_G = irradiance / G_ref;
-            
-            let v_oc_cell = V_oc_ref + (0.035 * Math.log(delta_G)) + k_v * (temperature - T_ref);
-            v_oc_cell = Math.max(0.25, Math.min(0.75, v_oc_cell));
-            
-            let i_sc_string = (I_sc_ref / panel.default_ns) * delta_G * (1 + k_i * (temperature - T_ref) * panel.default_ns);
-            i_sc_string = Math.max(0, i_sc_string);
-            
-            let v_mp = v_oc_cell * series * 0.82;
-            let i_mp = i_sc_string * parallel * 0.94;
-            let p_mp = v_mp * i_mp;
-            
-            if (irradiance < 300) {
-                const correction = 0.6 + 0.4 * (irradiance / 300);
-                v_mp *= correction;
-                i_mp *= correction;
-                p_mp = v_mp * i_mp;
-            }
-            
-            return {
-                vmp: v_mp,
-                imp: i_mp,
-                pmp: p_mp,
-                voc: v_oc_cell * series,
-                isc: i_sc_string * parallel,
-                panelName: panel.name,
-                panelPmax: panel.pmax
+        // ========== INIT CHARTS ==========
+        function initCharts() {
+            const options = {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { 
+                        ticks: { color: '#94A3B8', maxTicksLimit: 5 },
+                        grid: { color: '#334155' }
+                    },
+                    y: { 
+                        ticks: { color: '#94A3B8', maxTicksLimit: 4 },
+                        grid: { color: '#334155' }
+                    }
+                },
+                elements: { point: { radius: 0 } }
             };
-        }
 
-        // Calculate rise time
-        function calculateRiseTime(timeArray, data, finalValue) {
-            const target = 0.9 * finalValue;
-            for (let i = 0; i < data.length; i++) {
-                if (data[i] >= target) return timeArray[i];
-            }
-            return 0;
-        }
-
-        // Calculate settling time
-        function calculateSettlingTime(timeArray, data, finalValue) {
-            const tolerance = 0.02 * finalValue;
-            for (let i = data.length - 1; i >= 0; i--) {
-                if (Math.abs(data[i] - finalValue) > tolerance) {
-                    return timeArray[Math.min(i + 1, data.length - 1)];
-                }
-            }
-            return 0;
-        }
-
-        // Main update function
-        function updateSimulation() {
-            // Get inputs
-            const irradiance = parseFloat(document.getElementById('irradiance').value) || 1000;
-            const temperature = parseFloat(document.getElementById('temperature').value) || 25;
-            const series = parseInt(document.getElementById('seriesCells').value) || 60;
-            const parallel = parseInt(document.getElementById('parallelStrings').value) || 1;
-            const sensorGain = parseFloat(document.getElementById('sensorGain').value) || 1;
-            const simTime = parseFloat(document.getElementById('simTime').value) || 5;
-            
-            // Parse TF
-            const tfNum = parseFloat(document.getElementById('tfNum').value) || 1;
-            let tfDen = [0.5, 1];
-            try {
-                tfDen = document.getElementById('tfDen').value.split(',').map(x => parseFloat(x.trim()));
-                if (tfDen.length < 2) tfDen = [0.5, 1];
-            } catch { tfDen = [0.5, 1]; }
-
-            // Calculate PV
-            const pv = calculateIndustrialPV(irradiance, temperature, series, parallel);
-            
-            // Update displays
-            document.getElementById('tfDisplay').innerHTML = `G(s) = ${tfNum}/(${tfDen[0]}s + ${tfDen[1]})`;
-            document.getElementById('timeDisplay').innerHTML = `${simTime.toFixed(1)}s simulation`;
-            
-            // Generate time array
-            const steps = 100;
-            const timeArray = [];
-            const dt = simTime / steps;
-            for (let i = 0; i <= steps; i++) timeArray.push(i * dt);
-            
-            // TF parameters
-            const K = tfNum / tfDen[1];
-            const tau = tfDen[0] / tfDen[1];
-            
-            // Generate outputs
-            const voltageOut = timeArray.map(t => K * pv.vmp * (1 - Math.exp(-t / Math.max(tau, 0.01))) * sensorGain);
-            const currentOut = timeArray.map(t => pv.imp * (0.94 + 0.06 * (1 - Math.exp(-t / (tau * 0.7)))));
-            const powerOut = timeArray.map((t, i) => voltageOut[i] * currentOut[i]);
-            
-            // Format labels
-            const timeLabels = timeArray.map(t => t.toFixed(1));
-            
-            // Update charts
-            voltageChart.data.labels = timeLabels;
-            voltageChart.data.datasets[0].data = voltageOut;
-            voltageChart.update();
-            
-            currentChart.data.labels = timeLabels;
-            currentChart.data.datasets[0].data = currentOut;
-            currentChart.update();
-            
-            powerChart.data.labels = timeLabels;
-            powerChart.data.datasets[0].data = powerOut;
-            powerChart.update();
-            
-            // Final values
-            const finalVoltage = voltageOut[voltageOut.length - 1];
-            const finalCurrent = currentOut[currentOut.length - 1];
-            const finalPower = powerOut[powerOut.length - 1];
-            
-            // Max values
-            const maxVoltage = Math.max(...voltageOut);
-            const maxCurrent = Math.max(...currentOut);
-            const maxPower = Math.max(...powerOut);
-            
-            // Calculate dynamic parameters
-            const riseTime = calculateRiseTime(timeArray, voltageOut, finalVoltage);
-            const settlingTime = calculateSettlingTime(timeArray, voltageOut, finalVoltage);
-            const peakIndex = powerOut.indexOf(maxPower);
-            const peakTime = timeArray[peakIndex];
-            const overshoot = maxPower > finalPower ? ((maxPower - finalPower) / finalPower) * 100 : 0;
-            
-            // Calculate efficiency and losses
-            const efficiency = (finalPower / pv.pmp) * 100;
-            const powerLoss = pv.pmp - finalPower;
-            
-            // Update live values
-            document.getElementById('liveVoltage').innerText = finalVoltage.toFixed(2);
-            document.getElementById('liveCurrent').innerText = finalCurrent.toFixed(2);
-            document.getElementById('livePower').innerText = finalPower.toFixed(2);
-            document.getElementById('liveEfficiency').innerText = efficiency.toFixed(1);
-            
-            // Update status texts
-            document.getElementById('voltageStatus').innerText = `${finalVoltage.toFixed(2)}V (steady)`;
-            document.getElementById('currentStatus').innerText = `MPP: ${pv.imp.toFixed(2)}A`;
-            document.getElementById('powerStatus').innerText = `Efficiency: ${efficiency.toFixed(1)}%`;
-            document.getElementById('efficiencyStatus').innerText = `τ = ${tau.toFixed(2)}s`;
-            
-            // Update chart footers
-            document.getElementById('voltageSteady').innerText = finalVoltage.toFixed(2);
-            document.getElementById('voltageTau').innerText = tau.toFixed(2);
-            document.getElementById('voltageMax').innerText = maxVoltage.toFixed(2);
-            
-            document.getElementById('currentSteady').innerText = finalCurrent.toFixed(2);
-            document.getElementById('currentRise').innerText = riseTime.toFixed(2);
-            document.getElementById('currentMax').innerText = maxCurrent.toFixed(2);
-            
-            document.getElementById('powerSteady').innerText = finalPower.toFixed(2);
-            document.getElementById('powerPeak').innerText = maxPower.toFixed(2);
-            document.getElementById('powerMppt').innerText = ((finalPower/pv.pmp)*100).toFixed(1);
-            
-            // Update industrial parameters
-            document.getElementById('paramVmp').innerText = pv.vmp.toFixed(2);
-            document.getElementById('paramImp').innerText = pv.imp.toFixed(2);
-            document.getElementById('paramPmp').innerText = pv.pmp.toFixed(2);
-            document.getElementById('paramVoc').innerText = pv.voc.toFixed(2);
-            document.getElementById('paramIsc').innerText = pv.isc.toFixed(2);
-            
-            document.getElementById('paramVout').innerText = finalVoltage.toFixed(2);
-            document.getElementById('paramIout').innerText = finalCurrent.toFixed(2);
-            document.getElementById('paramPout').innerText = finalPower.toFixed(2);
-            document.getElementById('paramEta').innerText = efficiency.toFixed(1);
-            document.getElementById('paramLoss').innerText = powerLoss.toFixed(2);
-            
-            document.getElementById('paramTau').innerText = tau.toFixed(2);
-            document.getElementById('paramRise').innerText = riseTime.toFixed(2);
-            document.getElementById('paramSettle').innerText = settlingTime.toFixed(2);
-            document.getElementById('paramPeak').innerText = peakTime.toFixed(2);
-            document.getElementById('paramOvershoot').innerText = overshoot.toFixed(1);
-            
-            document.getElementById('paramG').innerText = irradiance;
-            document.getElementById('paramT').innerText = temperature;
-            
-            // Update flow current
-            document.getElementById('flowCurrent').innerHTML = finalCurrent.toFixed(2) + ' A';
-            
-            // Determine system status
-            let systemStatus = "Optimal";
-            let statusClass = "status-good";
-            let mpptEfficiency = (finalPower / pv.pmp) * 100;
-            
-            if (mpptEfficiency < 85) {
-                systemStatus = "Degraded";
-                statusClass = "status-warning";
-            } else if (mpptEfficiency < 70) {
-                systemStatus = "Failed";
-                statusClass = "status-bad";
-            }
-            
-            document.getElementById('statusSystem').innerText = systemStatus;
-            document.getElementById('statusSystem').className = `status-value ${statusClass}`;
-            document.getElementById('statusMPPT').innerText = mpptEfficiency.toFixed(1) + '%';
-            document.getElementById('statusMPPT').className = `status-value ${mpptEfficiency > 90 ? 'status-good' : mpptEfficiency > 80 ? 'status-warning' : 'status-bad'}`;
-            
-            let powerQuality = "Good";
-            if (overshoot > 5) powerQuality = "Fair";
-            if (overshoot > 10) powerQuality = "Poor";
-            document.getElementById('statusPQ').innerText = powerQuality;
-            
-            let stability = settlingTime < simTime * 0.8 ? "Stable" : "Oscillating";
-            document.getElementById('statusStability').innerText = stability;
-            
-            // System analysis text
-            document.getElementById('systemAnalysis').innerHTML = `
-                System with <span class="analysis-highlight">${pv.panelName}</span> operates at 
-                <span class="analysis-highlight">${efficiency.toFixed(1)}%</span> efficiency with 
-                output power <span class="analysis-highlight">${finalPower.toFixed(2)}W</span>.
-                Transfer function (τ=${tau.toFixed(2)}s) provides ${tau < 0.5 ? 'fast' : 'medium'} response.
-                ${mpptEfficiency > 90 ? 'MPPT tracking is excellent.' : 
-                  mpptEfficiency > 80 ? 'MPPT tracking is adequate.' : 
-                  'MPPT tracking needs improvement.'}
-                ${overshoot < 2 ? 'No significant overshoot.' : 
-                  overshoot < 5 ? 'Minor overshoot detected.' : 
-                  'Significant overshoot detected.'}
-            `;
-            
-            // Update result summaries
-            document.getElementById('resultSummary').innerHTML = 
-                `Simulation with ${pv.panelName} at G=${irradiance}W/m², T=${temperature}°C`;
-            
-            document.getElementById('resultPv').innerHTML = 
-                `Vmp=${pv.vmp.toFixed(2)}V, Imp=${pv.imp.toFixed(2)}A, Pmp=${pv.pmp.toFixed(2)}W`;
-            
-            document.getElementById('resultOut').innerHTML = 
-                `V=${finalVoltage.toFixed(2)}V, I=${finalCurrent.toFixed(2)}A, P=${finalPower.toFixed(2)}W`;
-            
-            document.getElementById('resultDynamic').innerHTML = 
-                `τ=${tau.toFixed(2)}s, Tr=${riseTime.toFixed(2)}s, Ts=${settlingTime.toFixed(2)}s`;
-            
-            document.getElementById('resultEfficiency').innerHTML = 
-                `η=${efficiency.toFixed(1)}% (${mpptEfficiency > 90 ? 'Excellent' : 
-                                                   mpptEfficiency > 80 ? 'Good' : 
-                                                   mpptEfficiency > 70 ? 'Fair' : 'Poor'})`;
-            
-            document.getElementById('resultLoss').innerHTML = 
-                `${powerLoss.toFixed(2)}W (${((powerLoss/pv.pmp)*100).toFixed(1)}% loss)`;
-            
-            // Complete explanation
-            document.getElementById('completeExplanation').innerHTML = `
-                <p><span class="analysis-highlight">📋 System Overview:</span> This simulation models a PV array with 
-                <strong>${pv.panelName}</strong> panel (${panelDatabase[currentPanel].desc}) in 
-                ${series}s × ${parallel}p configuration at ${irradiance}W/m² and ${temperature}°C.</p>
-                
-                <div class="bullet-point">
-                    <div class="bullet"></div>
-                    <span><strong>🔧 PV Array Characteristics:</strong> Based on parameters from ${panelDatabase[currentPanel].source}.<br>
-                    - Vmp = ${pv.vmp.toFixed(2)}V (Maximum Power Point Voltage)<br>
-                    - Imp = ${pv.imp.toFixed(2)}A (Maximum Power Point Current)<br>
-                    - Pmp = ${pv.pmp.toFixed(2)}W (Maximum Power Point Power)</span>
-                </div>
-                
-                <div class="bullet-point">
-                    <div class="bullet"></div>
-                    <span><strong>⚙️ Transfer Function Analysis:</strong> G(s) = ${tfNum}/(${tfDen[0]}s + ${tfDen[1]}) 
-                    represents inverter/converter dynamics.<br>
-                    - Time constant τ = ${tau.toFixed(3)}s determines response speed<br>
-                    - Rise time (10% to 90%) = ${riseTime.toFixed(2)}s<br>
-                    - Settling time (2%) = ${settlingTime.toFixed(2)}s</span>
-                </div>
-                
-                <div class="bullet-point">
-                    <div class="bullet"></div>
-                    <span><strong>📊 Output Analysis:</strong><br>
-                    - Steady voltage: ${finalVoltage.toFixed(2)}V (${((finalVoltage/pv.vmp)*100).toFixed(1)}% of Vmp)<br>
-                    - Steady current: ${finalCurrent.toFixed(2)}A (${((finalCurrent/pv.imp)*100).toFixed(1)}% of Imp)<br>
-                    - Output power: ${finalPower.toFixed(2)}W (${efficiency.toFixed(1)}% of Pmp)<br>
-                    - Power loss: ${powerLoss.toFixed(2)}W (${((powerLoss/pv.pmp)*100).toFixed(1)}%)</span>
-                </div>
-                
-                <div class="bullet-point">
-                    <div class="bullet"></div>
-                    <span><strong>✅ Performance Assessment:</strong> System operates at ${efficiency.toFixed(1)}% efficiency.
-                    ${efficiency > 95 ? 'Excellent performance - suitable for high-efficiency applications.' : 
-                      efficiency > 90 ? 'Good performance - meets industry standards.' : 
-                      efficiency > 85 ? 'Adequate performance - consider system optimization.' : 
-                      'Poor performance - check system configuration and parameters.'}</span>
-                </div>
-            `;
-        }
-
-        // Event listeners
-        document.getElementById('simulateBtn').addEventListener('click', updateSimulation);
-        
-        const inputs = document.querySelectorAll('input');
-        inputs.forEach(input => {
-            input.addEventListener('input', () => {
-                clearTimeout(window.updateTimeout);
-                window.updateTimeout = setTimeout(updateSimulation, 400);
+            voltageChart = new Chart(document.getElementById('voltageChart'), {
+                type: 'line',
+                data: { labels: [], datasets: [{ data: [], borderColor: '#3B82F6', borderWidth: 2, fill: false }] },
+                options: options
             });
-        });
 
-        // Initial update
-        selectPanel('kc200gt');
+            currentChart = new Chart(document.getElementById('currentChart'), {
+                type: 'line',
+                data: { labels: [], datasets: [{ data: [], borderColor: '#EF4444', borderWidth: 2, fill: false }] },
+                options: options
+            });
+
+            powerChart = new Chart(document.getElementById('powerChart'), {
+                type: 'line',
+                data: { labels: [], datasets: [{ data: [], borderColor: '#10B981', borderWidth: 2, fill: false }] },
+                options: options
+            });
+        }
+
+        // ========== PILIH PANEL ==========
+        function pilihPanel(id) {
+            panelAktif = id;
+            const p = PANELS[id];
+            
+            // Update buttons
+            document.querySelectorAll('.panel-btn-industrial').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`btn${id === 'kc200gt' ? 'KC200GT' : 
+                                              id === '250w' ? '250W' :
+                                              id === 'msx60' ? 'MSX60' :
+                                              id === '100w' ? '100W' :
+                                              id === '300w' ? '300W' : 'Custom'}`).classList.add('active');
+            
+            // Update panel specs
+            document.getElementById('specModel').innerText = p.nama;
+            document.getElementById('specStc').innerText = `${Math.round(p.Vmp * p.Imp)}W | ${p.Vmp}V/${p.Imp}A`;
+            document.getElementById('specChar').innerText = `Voc ${p.Voc}V | Isc ${p.Isc}A`;
+            document.getElementById('specCell').innerText = `${p.Ns} sel · Kv ${p.Kv}`;
+            document.getElementById('activePanel').innerText = p.nama;
+            
+            // Update Ns
+            document.getElementById('seriesCells').value = p.Ns;
+            
+            updateSimulasi();
+        }
+
+        // ========== HITUNG PV ==========
+        function hitungPV(G, T, Ns, Np) {
+            const p = PANELS[panelAktif];
+            
+            const faktorG = Math.max(0, G / 1000);
+            const deltaT = T - 25;
+            
+            // Koreksi Isc
+            let Isc = p.Isc * faktorG * (1 + (p.Ki / p.Isc) * deltaT);
+            Isc = Math.max(0, Isc);
+            
+            // Koreksi Voc
+            let Voc = p.Voc * (1 + (p.Kv / p.Voc) * deltaT);
+            if (faktorG > 0) {
+                Voc = Voc * (1 + 0.05 * Math.log(faktorG));
+            }
+            Voc = Math.max(0, Voc);
+            
+            // Pendekatan Vmp dan Imp
+            let Vmp = Voc * 0.8;
+            let Imp = Isc * 0.9;
+            
+            // Skalakan dengan Ns dan Np
+            Vmp = Vmp * (Ns / p.Ns);
+            Imp = Imp * Np;
+            Voc = Voc * (Ns / p.Ns);
+            Isc = Isc * Np;
+            
+            let Pmp = Vmp * Imp;
+            
+            return { Vmp, Imp, Pmp, Voc, Isc };
+        }
+
+        // ========== UPDATE SIMULASI ==========
+        function updateSimulasi() {
+            try {
+                // Baca input
+                const G = Math.max(0, parseFloat(document.getElementById('irradiance').value) || 1000);
+                const T = parseFloat(document.getElementById('temperature').value) || 25;
+                const Ns = Math.max(1, parseInt(document.getElementById('seriesCells').value) || 54);
+                const Np = Math.max(1, parseInt(document.getElementById('parallelStrings').value) || 1);
+                const b0 = parseFloat(document.getElementById('tfNum').value) || 1;
+                const a1 = parseFloat(document.getElementById('tfA1').value) || 0.5;
+                const a0 = parseFloat(document.getElementById('tfA0').value) || 1;
+                const gain = parseFloat(document.getElementById('sensorGain').value) || 1;
+                const simTime = parseFloat(document.getElementById('simTime').value) || 5;
+
+                // Hitung PV
+                const pv = hitungPV(G, T, Ns, Np);
+
+                // Update TF display
+                const tau = a1 / a0;
+                const K = b0 / a0;
+                document.getElementById('tfEquation').innerHTML = `G(s) = ${b0} / (${a1}s + ${a0})`;
+                document.getElementById('tfParams').innerHTML = `τ = ${tau.toFixed(2)} s · K = ${K.toFixed(2)}`;
+                document.getElementById('simTimeDisplay').innerHTML = `t = ${simTime.toFixed(1)}s`;
+
+                // Generate time array
+                const steps = 100;
+                const dt = simTime / steps;
+                const waktu = [];
+                for (let i = 0; i <= steps; i++) waktu.push(i * dt);
+
+                // Hitung respons
+                const vOut = waktu.map(t => K * pv.Vmp * (1 - Math.exp(-t / Math.max(tau, 0.01))) * gain);
+                const iOut = waktu.map(t => pv.Imp * (0.9 + 0.1 * (1 - Math.exp(-t / Math.max(tau, 0.01)))));
+                const pOut = waktu.map((t, i) => vOut[i] * iOut[i]);
+
+                // Nilai akhir
+                const vFinal = vOut[vOut.length - 1];
+                const iFinal = iOut[iOut.length - 1];
+                const pFinal = pOut[pOut.length - 1];
+                const vMax = Math.max(...vOut);
+                const iMax = Math.max(...iOut);
+                const pMax = Math.max(...pOut);
+
+                // Hitung rise time
+                let riseTime = 0;
+                for (let i = 0; i < vOut.length; i++) {
+                    if (vOut[i] >= 0.1 * vFinal) {
+                        for (let j = i; j < vOut.length; j++) {
+                            if (vOut[j] >= 0.9 * vFinal) {
+                                riseTime = waktu[j] - waktu[i];
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                }
+
+                // Hitung settling time
+                let settlingTime = 0;
+                for (let i = vOut.length - 1; i >= 0; i--) {
+                    if (Math.abs(vOut[i] - vFinal) > 0.02 * vFinal) {
+                        settlingTime = waktu[Math.min(i + 1, vOut.length - 1)];
+                        break;
+                    }
+                }
+
+                // Efisiensi
+                const efisiensi = (pFinal / pv.Pmp) * 100;
+                const rugiDaya = pv.Pmp - pFinal;
+                const mpptEff = (pFinal / pv.Pmp) * 100;
+
+                // ========== UPDATE METRICS ==========
+                document.getElementById('metricV').innerText = vFinal.toFixed(2);
+                document.getElementById('metricI').innerText = iFinal.toFixed(2);
+                document.getElementById('metricP').innerText = pFinal.toFixed(2);
+                document.getElementById('metricEff').innerText = efisiensi.toFixed(1);
+                
+                document.getElementById('trendV').innerHTML = `<span>Nilai tunak · ${vFinal.toFixed(2)}V</span>`;
+                document.getElementById('trendI').innerHTML = `<span>MPP: ${pv.Imp.toFixed(2)}A · Output: ${iFinal.toFixed(2)}A</span>`;
+                document.getElementById('trendP').innerHTML = `<span>Efisiensi: ${efisiensi.toFixed(1)}%</span>`;
+                document.getElementById('trendTau').innerHTML = `<span>τ = ${tau.toFixed(2)}s</span>`;
+
+                // ========== UPDATE CHARTS ==========
+                const labelWaktu = waktu.map(t => t.toFixed(1));
+                
+                voltageChart.data.labels = labelWaktu;
+                voltageChart.data.datasets[0].data = vOut;
+                voltageChart.update();
+                
+                currentChart.data.labels = labelWaktu;
+                currentChart.data.datasets[0].data = iOut;
+                currentChart.update();
+                
+                powerChart.data.labels = labelWaktu;
+                powerChart.data.datasets[0].data = pOut;
+                powerChart.update();
+
+                // Chart footer
+                document.getElementById('steadyV').innerText = vFinal.toFixed(2);
+                document.getElementById('tauV').innerText = tau.toFixed(2);
+                document.getElementById('maxV').innerText = vMax.toFixed(2);
+                
+                document.getElementById('steadyI').innerText = iFinal.toFixed(2);
+                document.getElementById('riseI').innerText = riseTime.toFixed(2);
+                document.getElementById('maxI').innerText = iMax.toFixed(2);
+                
+                document.getElementById('steadyP').innerText = pFinal.toFixed(2);
+                document.getElementById('peakP').innerText = pMax.toFixed(2);
+                document.getElementById('mpptEff').innerText = mpptEff.toFixed(1);
+
+                // ========== UPDATE PARAMETERS ==========
+                document.getElementById('pVmp').innerText = pv.Vmp.toFixed(2);
+                document.getElementById('pImp').innerText = pv.Imp.toFixed(2);
+                document.getElementById('pPmp').innerText = pv.Pmp.toFixed(2);
+                document.getElementById('pVoc').innerText = pv.Voc.toFixed(2);
+                document.getElementById('pIsc').innerText = pv.Isc.toFixed(2);
+                
+                document.getElementById('pVout').innerText = vFinal.toFixed(2);
+                document.getElementById('pIout').innerText = iFinal.toFixed(2);
+                document.getElementById('pPout').innerText = pFinal.toFixed(2);
+                document.getElementById('pEta').innerText = efisiensi.toFixed(1);
+                document.getElementById('pLoss').innerText = rugiDaya.toFixed(2);
+                
+                document.getElementById('pTau').innerText = tau.toFixed(2);
+                document.getElementById('pRise').innerText = riseTime.toFixed(2);
+                document.getElementById('pSettle').innerText = settlingTime.toFixed(2);
+                document.getElementById('pPeak').innerText = (waktu[vOut.indexOf(pMax)] || 0).toFixed(2);
+                
+                const overshoot = pMax > pFinal ? ((pMax - pFinal)/pFinal*100) : 0;
+                document.getElementById('pOver').innerText = overshoot.toFixed(1);
+                
+                document.getElementById('pG').innerText = G;
+                document.getElementById('pT').innerText = T;
+
+                // ========== UPDATE FLOW ==========
+                document.getElementById('flowCurrent').innerText = iFinal.toFixed(2) + ' A';
+
+                // ========== UPDATE STATUS ==========
+                let statusSystem = "Optimal";
+                let statusClass = "status-good";
+                if (efisiensi < 85) { statusSystem = "Menurun"; statusClass = "status-warning"; }
+                if (efisiensi < 70) { statusSystem = "Kritis"; statusClass = "status-critical"; }
+                
+                document.getElementById('statusSystem').innerText = statusSystem;
+                document.getElementById('statusSystem').className = `status-value-industrial ${statusClass}`;
+                
+                document.getElementById('statusMPPT').innerText = mpptEff.toFixed(1) + '%';
+                document.getElementById('statusMPPT').className = `status-value-industrial ${mpptEff > 90 ? 'status-good' : mpptEff > 80 ? 'status-warning' : 'status-critical'}`;
+                
+                let kualitas = "Baik";
+                let kualitasClass = "status-good";
+                if (overshoot > 5) { kualitas = "Cukup"; kualitasClass = "status-warning"; }
+                if (overshoot > 10) { kualitas = "Buruk"; kualitasClass = "status-critical"; }
+                document.getElementById('statusPQ').innerText = kualitas;
+                document.getElementById('statusPQ').className = `status-value-industrial ${kualitasClass}`;
+                
+                document.getElementById('statusStab').innerText = settlingTime < simTime * 0.8 ? "Stabil" : "Osilasi";
+
+                // ========== UPDATE ANALYSIS ==========
+                document.getElementById('analysisText').innerHTML = `
+                    Panel <span class="analysis-highlight">${PANELS[panelAktif].nama}</span> beroperasi pada 
+                    <span class="analysis-highlight">${efisiensi.toFixed(1)}%</span> efisiensi dengan daya 
+                    <span class="analysis-highlight">${pFinal.toFixed(2)}W</span>. 
+                    Konstanta waktu τ = <span class="analysis-highlight">${tau.toFixed(2)}s</span> 
+                    (${tau < 0.3 ? 'sangat cepat' : tau < 0.6 ? 'cepat' : 'sedang'}).
+                    ${mpptEff > 90 ? 'Tracking MPPT sangat baik.' : 
+                      mpptEff > 80 ? 'Tracking MPPT cukup baik.' : 
+                      'Tracking MPPT perlu optimalisasi.'}
+                `;
+
+                // ========== UPDATE DETAIL RESULTS ==========
+                document.getElementById('detailPv').innerHTML = 
+                    `Vmp=${pv.Vmp.toFixed(2)}V · Imp=${pv.Imp.toFixed(2)}A · Pmp=${pv.Pmp.toFixed(2)}W`;
+                
+                document.getElementById('detailOut').innerHTML = 
+                    `V=${vFinal.toFixed(2)}V · I=${iFinal.toFixed(2)}A · P=${pFinal.toFixed(2)}W`;
+                
+                document.getElementById('detailDyn').innerHTML = 
+                    `τ=${tau.toFixed(2)}s · Tr=${riseTime.toFixed(2)}s · Ts=${settlingTime.toFixed(2)}s`;
+                
+                document.getElementById('detailEff').innerHTML = 
+                    `${efisiensi.toFixed(1)}% (${efisiensi > 90 ? 'Sangat Baik' : 
+                                                  efisiensi > 80 ? 'Baik' : 
+                                                  efisiensi > 70 ? 'Cukup' : 'Kritis'})`;
+                
+                document.getElementById('detailLoss').innerHTML = 
+                    `${rugiDaya.toFixed(2)}W (${((rugiDaya/pv.Pmp)*100).toFixed(1)}%)`;
+
+                // ========== UPDATE EXPLANATION ==========
+                document.getElementById('explanationText').innerHTML = `
+                    <p><span class="analysis-highlight">📋 RINGKASAN SISTEM:</span> Simulasi dengan panel 
+                    <strong>${PANELS[panelAktif].nama}</strong> (${PANELS[panelAktif].desc}) konfigurasi 
+                    ${Ns}s × ${Np}p pada G=${G}W/m², T=${T}°C.</p>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
+                        <div>
+                            <div class="bullet-industrial">
+                                <div class="bullet-point-industrial"></div>
+                                <span><strong>🔧 KARAKTERISTIK PV ARRAY:</strong><br>
+                                Vmp = ${pv.Vmp.toFixed(2)}V · Imp = ${pv.Imp.toFixed(2)}A · Pmp = ${pv.Pmp.toFixed(2)}W<br>
+                                Voc = ${pv.Voc.toFixed(2)}V · Isc = ${pv.Isc.toFixed(2)}A</span>
+                            </div>
+                            <div class="bullet-industrial">
+                                <div class="bullet-point-industrial"></div>
+                                <span><strong>⚙️ FUNGSI TRANSFER:</strong><br>
+                                G(s) = ${b0}/(${a1}s+${a0}) · τ = ${tau.toFixed(3)}s · K = ${K.toFixed(3)}</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="bullet-industrial">
+                                <div class="bullet-point-industrial"></div>
+                                <span><strong>📊 OUTPUT SISTEM:</strong><br>
+                                Vout = ${vFinal.toFixed(2)}V · Iout = ${iFinal.toFixed(2)}A · Pout = ${pFinal.toFixed(2)}W<br>
+                                Efisiensi = ${efisiensi.toFixed(1)}% · Rugi = ${rugiDaya.toFixed(2)}W</span>
+                            </div>
+                            <div class="bullet-industrial">
+                                <div class="bullet-point-industrial"></div>
+                                <span><strong>✅ PENILAIAN KINERJA:</strong><br>
+                                ${efisiensi > 90 ? 'Kinerja sangat baik · Memenuhi standar industri kelas 1' : 
+                                  efisiensi > 80 ? 'Kinerja baik · Sesuai spesifikasi' : 
+                                  efisiensi > 70 ? 'Kinerja cukup · Perlu evaluasi' : 
+                                  'Kinerja di bawah standar · Perlu optimalisasi sistem'}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        // ========== JAM REAL-TIME ==========
+        function updateJam() {
+            const now = new Date();
+            document.getElementById('liveClock').innerHTML = 
+                `⏱️ ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')} WIB`;
+        }
+        setInterval(updateJam, 1000);
+        updateJam();
+
+        // ========== INIT ==========
+        window.onload = function() {
+            initCharts();
+            pilihPanel('kc200gt');
+            
+            const inputs = ['irradiance', 'temperature', 'seriesCells', 'parallelStrings', 
+                           'tfNum', 'tfA1', 'tfA0', 'sensorGain', 'simTime'];
+            
+            inputs.forEach(id => {
+                document.getElementById(id).addEventListener('input', updateSimulasi);
+            });
+        };
     </script>
 </body>
 </html>
